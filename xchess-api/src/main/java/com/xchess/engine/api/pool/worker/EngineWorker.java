@@ -7,5 +7,5 @@ public interface EngineWorker {
 
     void runCommand(String command) throws IOException;
 
-    void stop();
+    void stop() throws IOException;
 }

@@ -14,6 +14,7 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
         StockfishConfig config = new StockfishConfig().setPath("stockfish");
         this.stockfish = new Stockfish(config);
         this.stockfish.start();
+        System.out.println(this.stockfish.test());
     }
 
     @Override
@@ -27,7 +28,7 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
     }
 
     @Override
-    public void stop() {
+    public void stop() throws IOException {
         this.stockfish.stop();
     }
 }
