@@ -1,33 +1,33 @@
 package com.xchess.engine.api.pool.worker.impl;
 
 import com.xchess.engine.api.pool.worker.EngineWorker;
+import com.xchess.main.Stockfish;
+import com.xchess.main.StockfishConfig;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 public class EngineWorkerStockfishImpl implements EngineWorker {
-    private Process process;
+    private Stockfish stockfish;
 
     @Override
     public void start() throws IOException {
-        ProcessBuilder builder = new ProcessBuilder("stockfish");
-        this.process = builder.start();
+        StockfishConfig config = new StockfishConfig().setPath("stockfish");
+        this.stockfish = new Stockfish(config);
+        this.stockfish.start();
     }
 
     @Override
     public void runCommand(String command) throws IOException {
-        OutputStream stdin = this.process.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
-
-        writer.write(command);
-        writer.flush();
-        writer.close();
+//        OutputStream stdin = this.process.getOutputStream();
+//        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
+//
+//        writer.write(command);
+//        writer.flush();
+//        writer.close();
     }
 
     @Override
     public void stop() {
-        this.process.destroyForcibly();
+        this.stockfish.stop();
     }
 }

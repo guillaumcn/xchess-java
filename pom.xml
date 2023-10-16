@@ -11,5 +11,6 @@
 
     <modules>
         <module>xchess-api</module>
+        <module>engine.stockfish</module>
     </modules>
 </project>
