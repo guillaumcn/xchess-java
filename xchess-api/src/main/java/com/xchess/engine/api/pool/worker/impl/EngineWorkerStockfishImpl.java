@@ -10,7 +10,7 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
     private Stockfish stockfish;
 
     @Override
-    public void start() throws IOException {
+    public void start() throws IOException, InterruptedException {
         StockfishConfig config = new StockfishConfig().setPath("stockfish");
         this.stockfish = new Stockfish(config);
         this.stockfish.start();

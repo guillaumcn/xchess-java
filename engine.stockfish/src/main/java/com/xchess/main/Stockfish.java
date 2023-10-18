@@ -3,6 +3,8 @@ package com.xchess.main;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Stockfish {
     private StockfishConfig config;
@@ -15,16 +17,8 @@ public class Stockfish {
         this.config = config;
     }
 
-    public StockfishConfig getConfig() {
-        return config;
-    }
-
-    public void setConfig(StockfishConfig config) {
-        this.config = config;
-    }
-
     public void start() throws IOException {
-        ProcessBuilder builder = new ProcessBuilder("stockfish");
+        ProcessBuilder builder = new ProcessBuilder(config.getPath());
         this.process = builder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> process.destroy()));
 
@@ -34,36 +28,41 @@ public class Stockfish {
         this.stderrReader =
                 new BufferedReader(new InputStreamReader(this.process.getErrorStream()));
 
-        this.receiveData();
+        this.waitUntilReady();
     }
 
-    private void sendCommand(String command) throws IOException {
-        this.writer.write(command);
-        this.writer.newLine();
-        this.writer.flush();
-    }
-
-    private List<String> receiveData() throws IOException {
-        this.sendCommand("isready");
+    private List<String> getLineUntil(Pattern responsePattern) throws IOException {
         List<String> results = new ArrayList<>();
         while (true) {
             String line = stdoutReader.readLine();
             if (!line.isEmpty()) {
-                if (line.equals("readyok")) {
+                results.add(line);
+                Matcher matcher = responsePattern.matcher(line);
+                if (matcher.matches()) {
                     break;
-                } else {
-                    results.add(line);
                 }
             }
         }
         return results;
     }
 
-    public List<String> test() throws IOException {
-        this.sendCommand("go movetime 10000");
-//        this.sendCommand("position startpos");
-//        this.sendCommand("go movetime 10000");
-        return receiveData();
+    private void writeCommand(String command) throws IOException {
+        this.writer.write(command);
+        this.writer.newLine();
+        this.writer.flush();
+    }
+
+    private void waitUntilReady() throws IOException {
+        this.writeCommand("isready");
+        getLineUntil(Pattern.compile("^readyok$"));
+    }
+
+    public List<String> test() throws IOException, InterruptedException {
+        this.waitUntilReady();
+        this.writeCommand("go infinite");
+        Thread.sleep(1000);
+        this.writeCommand("stop");
+        return getLineUntil(Pattern.compile("^bestmove.+?"));
     }
 
 
