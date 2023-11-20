@@ -26,4 +26,9 @@ public class EngineWorkerFactory extends BasePooledObjectFactory<EngineWorker> {
         EngineWorker engineWorker = p.getObject();
         engineWorker.stop();
     }
+
+    @Override
+    public boolean validateObject(PooledObject<EngineWorker> p) {
+        return p.getObject().isValid();
+    }
 }

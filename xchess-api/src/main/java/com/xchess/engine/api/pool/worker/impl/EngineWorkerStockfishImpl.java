@@ -1,34 +1,38 @@
 package com.xchess.engine.api.pool.worker.impl;
 
+import com.xchess.Stockfish;
 import com.xchess.engine.api.pool.worker.EngineWorker;
-import com.xchess.main.Stockfish;
-import com.xchess.main.StockfishConfig;
+import com.xchess.process.ProcessWrapper;
 
 import java.io.IOException;
+import java.util.List;
 
 public class EngineWorkerStockfishImpl implements EngineWorker {
     private Stockfish stockfish;
 
     @Override
     public void start() throws IOException, InterruptedException {
-        StockfishConfig config = new StockfishConfig().setPath("stockfish");
-        this.stockfish = new Stockfish(config);
+        this.stockfish = new Stockfish(new ProcessWrapper(new ProcessBuilder("stockfish")));
         this.stockfish.start();
-        System.out.println(this.stockfish.test());
-    }
-
-    @Override
-    public void runCommand(String command) throws IOException {
-//        OutputStream stdin = this.process.getOutputStream();
-//        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
-//
-//        writer.write(command);
-//        writer.flush();
-//        writer.close();
     }
 
     @Override
     public void stop() throws IOException {
         this.stockfish.stop();
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.stockfish.healthCheck();
+    }
+
+    @Override
+    public List<String> getPossibleMoves(String fen) {
+        try {
+            this.stockfish.moveToFen(fen);
+            return this.stockfish.getPossibleMoves();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

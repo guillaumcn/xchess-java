@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -23,12 +24,20 @@ public class PoolWrapper {
         config.setMaxTotal(poolProperties.getMaxTotal());
         config.setSoftMinEvictableIdleDuration(Duration.ofMillis(poolProperties.getEvictableIdleDurationInMs()));
         config.setTimeBetweenEvictionRuns(Duration.ofMillis(poolProperties.getTimeBetweenEvictionRunsInMs()));
-        
+
         this.pool = new GenericObjectPool<>(new EngineWorkerFactory(), config);
         this.pool.preparePool();
     }
 
-    public GenericObjectPool<EngineWorker> getPool() {
-        return pool;
+    public <T> T doAction(Function<EngineWorker, T> action) throws Exception {
+        EngineWorker engineWorker = this.pool.borrowObject();
+        try {
+            T result = action.apply(engineWorker);
+            this.pool.returnObject(engineWorker);
+            return result;
+        } catch (Exception e) {
+            this.pool.invalidateObject(engineWorker);
+            throw e;
+        }
     }
 }
