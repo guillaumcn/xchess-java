@@ -12,11 +12,13 @@ import java.util.stream.Collectors;
 public class Stockfish {
     private ProcessWrapper process;
     private StockfishConfig config;
+    private StockfishOptions options;
 
 
     public Stockfish(ProcessWrapper process, StockfishConfig config) {
         this.process = process;
         this.config = config;
+        this.options = new StockfishOptions();
     }
 
     public void start() throws IOException, InterruptedException {
@@ -30,7 +32,8 @@ public class Stockfish {
 
 
     public void setOptions(StockfishOptions options) throws IOException, InterruptedException {
-        List<String> commands = options.toCommands();
+        this.options = this.options.merge(options);
+        List<String> commands = this.options.toCommands();
         for (String command :
                 commands) {
             this.process.writeCommand(command);

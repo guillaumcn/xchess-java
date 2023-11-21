@@ -17,7 +17,7 @@ public class ProcessWrapper {
         this.builder = builder;
     }
 
-    public void start() throws IOException, InterruptedException {
+    public void start() throws IOException {
         this.process = builder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> process.destroy()));
 
