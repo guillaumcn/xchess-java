@@ -8,17 +8,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ProcessWrapper {
-    private ProcessBuilder builder;
+    private final ProcessBuilder processBuilder;
     private Process process;
     private BufferedWriter writer;
     private BufferedReader stdoutReader;
 
-    public ProcessWrapper(ProcessBuilder builder) {
-        this.builder = builder;
+    public ProcessWrapper(String... command) {
+        this.processBuilder = new ProcessBuilder(command);
+    }
+
+    public void setProcess(Process process) {
+        this.process = process;
+    }
+
+    public void setWriter(BufferedWriter writer) {
+        this.writer = writer;
+    }
+
+    public void setStdoutReader(BufferedReader stdoutReader) {
+        this.stdoutReader = stdoutReader;
     }
 
     public void start() throws IOException {
-        this.process = builder.start();
+        this.process = this.processBuilder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> process.destroy()));
 
         this.writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
@@ -29,7 +41,7 @@ public class ProcessWrapper {
     public void stop() throws IOException {
         this.writer.close();
         this.stdoutReader.close();
-        this.process.destroyForcibly();
+        this.process.destroy();
     }
 
     public List<String> getLineUntil(Pattern responsePattern, int timeoutInMs) throws InterruptedException {

@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Stockfish {
-    private ProcessWrapper process;
-    private StockfishConfig config;
+    private final ProcessWrapper process;
+    private final StockfishConfig config;
     private StockfishOptions options;
 
 
