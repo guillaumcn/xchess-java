@@ -1,6 +1,7 @@
 package com.xchess.engine.api.pool.worker.impl;
 
 import com.xchess.Stockfish;
+import com.xchess.config.StockfishConfig;
 import com.xchess.engine.api.pool.worker.EngineWorker;
 import com.xchess.process.ProcessWrapper;
 
@@ -12,7 +13,8 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
 
     @Override
     public void start() throws IOException, InterruptedException {
-        this.stockfish = new Stockfish(new ProcessWrapper(new ProcessBuilder("stockfish")));
+        StockfishConfig stockfishConfig = new StockfishConfig().setReadTimeoutInMs(1000);
+        this.stockfish = new Stockfish(new ProcessWrapper(new ProcessBuilder("stockfish")), stockfishConfig);
         this.stockfish.start();
     }
 

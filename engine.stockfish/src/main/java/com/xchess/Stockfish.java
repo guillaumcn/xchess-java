@@ -1,5 +1,6 @@
 package com.xchess;
 
+import com.xchess.config.StockfishConfig;
 import com.xchess.option.StockfishOptions;
 import com.xchess.process.ProcessWrapper;
 
@@ -10,10 +11,12 @@ import java.util.stream.Collectors;
 
 public class Stockfish {
     private ProcessWrapper process;
+    private StockfishConfig config;
 
 
-    public Stockfish(ProcessWrapper process) {
+    public Stockfish(ProcessWrapper process, StockfishConfig config) {
         this.process = process;
+        this.config = config;
     }
 
     public void start() throws IOException, InterruptedException {
@@ -49,7 +52,7 @@ public class Stockfish {
 
     public List<String> getPossibleMoves() throws IOException, InterruptedException {
         this.process.writeCommand("go perft 1");
-        List<String> lines = this.process.getLineUntil(Pattern.compile("^Nodes searched.+?$"));
+        List<String> lines = this.process.getLineUntil(Pattern.compile("^Nodes searched.+?$"), this.config.getReadTimeoutInMs());
         return lines.stream().filter((line) -> Pattern.matches("^....: 1$", line)).map((line) -> line.split(":")[0]).collect(Collectors.toList());
     }
 
@@ -64,6 +67,6 @@ public class Stockfish {
 
     private void waitUntilReady() throws IOException, InterruptedException {
         this.process.writeCommand("isready");
-        this.process.getLineUntil(Pattern.compile("^readyok$"));
+        this.process.getLineUntil(Pattern.compile("^readyok$"), this.config.getReadTimeoutInMs());
     }
 }

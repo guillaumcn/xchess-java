@@ -1,7 +1,5 @@
 package com.xchess.process;
 
-import com.xchess.constants.Constants;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +30,6 @@ public class ProcessWrapper {
         this.writer.close();
         this.stdoutReader.close();
         this.process.destroyForcibly();
-    }
-
-    public List<String> getLineUntil(Pattern responsePattern) throws InterruptedException {
-        return getLineUntil(responsePattern, Constants.DEFAULT_READ_TIMEOUT);
     }
 
     public List<String> getLineUntil(Pattern responsePattern, int timeoutInMs) throws InterruptedException {
