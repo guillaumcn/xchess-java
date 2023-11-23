@@ -82,7 +82,7 @@ public class Stockfish {
 
     public boolean isMovePossible(String move) throws IOException,
             InterruptedException {
-        if (SquareValidator.isSquareSyntaxValid(move)) {
+        if (MoveValidator.isMoveValid(move)) {
             throw new IllegalArgumentException("Invalid syntax for move " + move);
         }
         return getPossibleMoves().contains(move);
@@ -99,7 +99,7 @@ public class Stockfish {
         for (String move :
                 moves) {
             if (this.isMovePossible(move)) {
-                this.process.writeCommand("position fen " + this.getFenPosition() + " " + move);
+                this.process.writeCommand("position fen " + this.getFenPosition() + " moves " + move);
                 this.waitUntilReady();
             } else {
                 this.moveToFenPosition(startingPosition);
