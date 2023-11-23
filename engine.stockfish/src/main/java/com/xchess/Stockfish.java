@@ -55,7 +55,7 @@ public class Stockfish {
 
     public List<String> getPossibleMoves() throws IOException, InterruptedException {
         this.process.writeCommand("go perft 1");
-        List<String> lines = this.process.getLineUntil(Pattern.compile("^Nodes searched.+?$"), this.config.getReadTimeoutInMs());
+        List<String> lines = this.process.readLinesUntil(Pattern.compile("^Nodes searched.+?$"), this.config.getReadTimeoutInMs());
         return lines.stream().filter((line) -> Pattern.matches("^....: 1$", line)).map((line) -> line.split(":")[0]).collect(Collectors.toList());
     }
 
@@ -70,6 +70,6 @@ public class Stockfish {
 
     private void waitUntilReady() throws IOException, InterruptedException {
         this.process.writeCommand("isready");
-        this.process.getLineUntil(Pattern.compile("^readyok$"), this.config.getReadTimeoutInMs());
+        this.process.readLinesUntil("readyok", this.config.getReadTimeoutInMs());
     }
 }

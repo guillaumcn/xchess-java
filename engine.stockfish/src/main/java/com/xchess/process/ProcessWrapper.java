@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +35,7 @@ public class ProcessWrapper {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> process.destroy()));
 
         this.writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
-        this.stdoutReader =
-                new BufferedReader(new InputStreamReader(this.process.getInputStream()));
+        this.stdoutReader = new BufferedReader(new InputStreamReader(this.process.getInputStream()));
     }
 
     public void stop() throws IOException {
@@ -44,20 +44,30 @@ public class ProcessWrapper {
         this.process.destroy();
     }
 
-    public List<String> getLineUntil(Pattern responsePattern, int timeoutInMs) throws InterruptedException {
+    public List<String> readLinesUntil(Pattern responsePattern, int timeoutInMs) throws InterruptedException {
+        return readLinesUntil((line) -> {
+            Matcher matcher = responsePattern.matcher(line);
+            return matcher.matches();
+        }, timeoutInMs);
+    }
+
+    public List<String> readLinesUntil(String expectedResponse, int timeoutInMs) throws InterruptedException {
+        return readLinesUntil((line) -> line.equals(expectedResponse), timeoutInMs);
+    }
+
+    private List<String> readLinesUntil(Function<String, Boolean> matchFunction, int timeoutInMs) throws InterruptedException {
+        if (timeoutInMs <= 0) {
+            throw new IllegalArgumentException("Read timeout should be greater than 0");
+        }
+        
         List<String> results = new ArrayList<>();
         Thread t = new Thread(() -> {
-            long time = System.currentTimeMillis();
             try {
                 while (true) {
-                    if (System.currentTimeMillis() > time + timeoutInMs) {
-                        throw new RuntimeException("No line matching " + responsePattern.toString() + " received in " + timeoutInMs + " ms");
-                    }
                     String line = stdoutReader.readLine();
                     if (!Objects.isNull(line) && !line.isEmpty()) {
                         results.add(line);
-                        Matcher matcher = responsePattern.matcher(line);
-                        if (matcher.matches()) {
+                        if (matchFunction.apply(line)) {
                             break;
                         }
                     }
@@ -67,7 +77,7 @@ public class ProcessWrapper {
             }
         });
         t.start();
-        t.join();
+        t.join(timeoutInMs);
 
         return results;
     }
