@@ -33,7 +33,7 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
     @Override
     public List<String> getPossibleMoves(String fen) {
         try {
-            this.stockfish.moveToFen(fen);
+            this.stockfish.moveToFenPosition(fen);
             return this.stockfish.getPossibleMoves();
         } catch (Exception e) {
             throw new RuntimeException(e);
