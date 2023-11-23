@@ -13,8 +13,10 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
 
     @Override
     public void start() throws IOException, InterruptedException {
-        StockfishConfig stockfishConfig = new StockfishConfig().setReadTimeoutInMs(1000);
-        this.stockfish = new Stockfish(new ProcessWrapper("stockfish"), stockfishConfig);
+        StockfishConfig stockfishConfig =
+                new StockfishConfig().setReadTimeoutInMs(1000);
+        this.stockfish = new Stockfish(new ProcessWrapper("stockfish"),
+                stockfishConfig);
         this.stockfish.start();
     }
 

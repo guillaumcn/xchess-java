@@ -19,7 +19,8 @@ public class PoolWrapper {
 
     @Autowired
     public PoolWrapper(PoolProperties poolProperties) throws Exception {
-        GenericObjectPoolConfig<EngineWorker> config = new GenericObjectPoolConfig<>();
+        GenericObjectPoolConfig<EngineWorker> config =
+                new GenericObjectPoolConfig<>();
         config.setMinIdle(poolProperties.getMinIdle());
         config.setMaxTotal(poolProperties.getMaxTotal());
         config.setSoftMinEvictableIdleDuration(Duration.ofMillis(poolProperties.getEvictableIdleDurationInMs()));

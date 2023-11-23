@@ -54,7 +54,8 @@ public class ProcessWrapperTest {
     public void shouldReturnInputMessagesListWhenReadUntilPattern() throws IOException, InterruptedException {
         String breakMessage = "STOP";
         List<String> expected = prepareLinesRead(breakMessage);
-        assertEquals(expected, this.subject.readLinesUntil(Pattern.compile("^" + breakMessage + "$"), 5000));
+        assertEquals(expected, this.subject.readLinesUntil(Pattern.compile(
+                "^" + breakMessage + "$"), 5000));
     }
 
     @Test
@@ -67,13 +68,15 @@ public class ProcessWrapperTest {
     @Test
     public void shouldReturnInputMessagesListWhenReadReachesTimeout() throws InterruptedException {
         String breakMessage = "STOP";
-        assertEquals(new ArrayList<>(), this.subject.readLinesUntil(breakMessage, 1));
+        assertEquals(new ArrayList<>(),
+                this.subject.readLinesUntil(breakMessage, 1));
     }
 
     @Test
     public void shouldThrowExceptionIfReadTimeoutIsLowerEqualsThan0() {
         String breakMessage = "STOP";
-        assertThrows(IllegalArgumentException.class, () -> this.subject.readLinesUntil(breakMessage, 0));
+        assertThrows(IllegalArgumentException.class,
+                () -> this.subject.readLinesUntil(breakMessage, 0));
     }
 
     @Test

@@ -34,8 +34,10 @@ public class ProcessWrapper {
         this.process = this.processBuilder.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> process.destroy()));
 
-        this.writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
-        this.stdoutReader = new BufferedReader(new InputStreamReader(this.process.getInputStream()));
+        this.writer =
+                new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
+        this.stdoutReader =
+                new BufferedReader(new InputStreamReader(this.process.getInputStream()));
     }
 
     public void stop() throws IOException {
@@ -44,22 +46,26 @@ public class ProcessWrapper {
         this.process.destroy();
     }
 
-    public List<String> readLinesUntil(Pattern responsePattern, int timeoutInMs) throws InterruptedException {
+    public List<String> readLinesUntil(Pattern responsePattern,
+                                       int timeoutInMs) throws InterruptedException {
         return readLinesUntil((line) -> {
             Matcher matcher = responsePattern.matcher(line);
             return matcher.matches();
         }, timeoutInMs);
     }
 
-    public List<String> readLinesUntil(String expectedResponse, int timeoutInMs) throws InterruptedException {
-        return readLinesUntil((line) -> line.equals(expectedResponse), timeoutInMs);
+    public List<String> readLinesUntil(String expectedResponse,
+                                       int timeoutInMs) throws InterruptedException {
+        return readLinesUntil((line) -> line.equals(expectedResponse),
+                timeoutInMs);
     }
 
     private List<String> readLinesUntil(Function<String, Boolean> matchFunction, int timeoutInMs) throws InterruptedException {
         if (timeoutInMs <= 0) {
-            throw new IllegalArgumentException("Read timeout should be greater than 0");
+            throw new IllegalArgumentException("Read timeout should be " +
+                    "greater than 0");
         }
-        
+
         List<String> results = new ArrayList<>();
         Thread t = new Thread(() -> {
             try {

@@ -6,7 +6,8 @@ import com.xchess.option.StockfishOptionKey;
 public class BooleanStockfishOption extends StockfishOption {
     protected boolean defaultValue;
 
-    public BooleanStockfishOption(StockfishOptionKey key, boolean defaultValue) {
+    public BooleanStockfishOption(StockfishOptionKey key,
+                                  boolean defaultValue) {
         super(key);
         this.defaultValue = defaultValue;
     }

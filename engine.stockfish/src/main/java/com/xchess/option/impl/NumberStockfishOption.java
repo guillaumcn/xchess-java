@@ -8,7 +8,8 @@ public class NumberStockfishOption extends StockfishOption {
     private int max;
     private int defaultValue;
 
-    public NumberStockfishOption(StockfishOptionKey key, int defaultValue, int min, int max) {
+    public NumberStockfishOption(StockfishOptionKey key, int defaultValue,
+                                 int min, int max) {
         super(key);
         this.min = min;
         this.max = max;
