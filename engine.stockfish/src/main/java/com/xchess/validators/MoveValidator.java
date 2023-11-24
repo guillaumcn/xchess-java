@@ -1,7 +1,5 @@
 package com.xchess.validators;
 
-import java.util.Arrays;
-
 public class MoveValidator {
     public static boolean isMoveValid(String move) {
         if (move.length() == 4) {
@@ -10,7 +8,7 @@ public class MoveValidator {
         }
 
         if (move.length() == 5) {
-            return MoveValidator.isMoveValid(move.substring(0, 4)) && Arrays.asList("q", "r", "b", "n").contains(move.substring(4));
+            return MoveValidator.isMoveValid(move.substring(0, 4)) && PieceValidator.isPromotablePieceValid(move.substring(4));
         }
 
         return false;

@@ -131,20 +131,6 @@ public class Stockfish {
         return true;
     }
 
-//    public static boolean isFenSyntaxValid(String fen) {
-//        Pattern regexPattern = Pattern.compile("\\s*^(((?:[rnbqkpRNBQKP1-8" +
-//                "]+\\/){7})[rnbqkpRNBQKP1-8]+)\\s([b|w])\\s(-|[K|Q|k|q]{1,
-//                4})" +
-//                "\\s(-|[a-h][1-8])\\s(\\d+\\s\\d+)$");
-//
-//        Matcher regexMatcher = regexPattern.matcher(fen);
-//        if (!regexMatcher.matches()) {
-//            return false;
-//        }
-//
-//
-//    }
-
     private void waitUntilReady() throws IOException, InterruptedException {
         this.process.writeCommand("isready");
         this.process.readLinesUntil("readyok",
