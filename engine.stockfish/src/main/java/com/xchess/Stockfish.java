@@ -3,12 +3,15 @@ package com.xchess;
 import com.xchess.config.StockfishConfig;
 import com.xchess.option.StockfishOptions;
 import com.xchess.process.ProcessWrapper;
+import com.xchess.validators.FenSyntaxValidator;
 import com.xchess.validators.MoveValidator;
 import com.xchess.validators.SquareValidator;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 public class Stockfish {
@@ -88,6 +91,38 @@ public class Stockfish {
         return getPossibleMoves().contains(move);
     }
 
+    public boolean isValidFenPosition(String fen) throws IOException,
+            InterruptedException {
+        if (!FenSyntaxValidator.isFenSyntaxValid(fen)) {
+            return false;
+        }
+        AtomicBoolean isValid = new AtomicBoolean(false);
+
+        Thread t = new Thread(() -> {
+            Stockfish tempStockfish =
+                    new Stockfish(new ProcessWrapper(this.process.getCommand()),
+                            this.config);
+            try {
+                tempStockfish.start();
+                tempStockfish.moveToFenPosition(fen);
+                String bestMove = tempStockfish.findBestMove();
+                isValid.set(!Objects.isNull(bestMove));
+                tempStockfish.stop();
+            } catch (Exception e) {
+                isValid.set(false);
+                try {
+                    tempStockfish.stop();
+                } catch (IOException ex) {
+                    throw new RuntimeException(e);
+                }
+                throw new RuntimeException(e);
+            }
+        });
+        t.join();
+
+        return isValid.get();
+    }
+
     public void move(List<String> moves) throws IOException,
             InterruptedException {
         String startingPosition = this.getFenPosition();
@@ -120,6 +155,27 @@ public class Stockfish {
             InterruptedException {
         this.process.writeCommand("position fen " + fen);
         this.waitUntilReady();
+    }
+
+    public String findBestMove() throws IOException, InterruptedException {
+        this.process.writeCommand("go depth 10");
+        String bestMove = this.getBestMoveFromOutput();
+        this.waitUntilReady();
+
+        return bestMove;
+    }
+
+    private String getBestMoveFromOutput() throws InterruptedException,
+            IOException {
+        Optional<String> bestmoveLine =
+                this.process.readLinesUntil(Pattern.compile("^bestmove.+?$"),
+                        this.config.getReadTimeoutInMs()).stream().filter((line) -> line.startsWith("bestmove")).findFirst();
+
+        if (bestmoveLine.isEmpty()) {
+            throw new IOException("Cannot find best move line from output");
+        }
+        String bestMove = bestmoveLine.get().split(" ")[1];
+        return bestMove.equals("(none)") ? null : bestMove;
     }
 
     public boolean healthCheck() {
