@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +14,7 @@ public class ProcessWrapper {
     private Process process;
     private BufferedWriter writer;
     private BufferedReader stdoutReader;
-    private String[] command;
+    private final String[] command;
 
     public ProcessWrapper(String... command) {
         this.processBuilder = new ProcessBuilder(command);
@@ -53,7 +54,7 @@ public class ProcessWrapper {
     }
 
     public List<String> readLinesUntil(Pattern responsePattern,
-                                       int timeoutInMs) throws InterruptedException {
+                                       int timeoutInMs) {
         return readLinesUntil((line) -> {
             Matcher matcher = responsePattern.matcher(line);
             return matcher.matches();
@@ -61,26 +62,27 @@ public class ProcessWrapper {
     }
 
     public List<String> readLinesUntil(String expectedResponse,
-                                       int timeoutInMs) throws InterruptedException {
+                                       int timeoutInMs) {
         return readLinesUntil((line) -> line.equals(expectedResponse),
                 timeoutInMs);
     }
 
-    private List<String> readLinesUntil(Function<String, Boolean> matchFunction, int timeoutInMs) throws InterruptedException {
+    private List<String> readLinesUntil(Function<String, Boolean> matchFunction, int timeoutInMs) {
         if (timeoutInMs <= 0) {
             throw new IllegalArgumentException("Read timeout should be " +
                     "greater than 0");
         }
 
         List<String> results = new ArrayList<>();
+        AtomicBoolean keepRunning = new AtomicBoolean(true);
         Thread t = new Thread(() -> {
             try {
-                while (true) {
+                while (keepRunning.get()) {
                     String line = stdoutReader.readLine();
                     if (!Objects.isNull(line) && !line.isEmpty()) {
                         results.add(line);
                         if (matchFunction.apply(line)) {
-                            break;
+                            keepRunning.set(false);
                         }
                     }
                 }
@@ -89,7 +91,14 @@ public class ProcessWrapper {
             }
         });
         t.start();
-        t.join(timeoutInMs);
+        try {
+            t.join(timeoutInMs);
+            // Timeout do not stop thread, ensure it will be stopped by
+            // setting keepRunning to false
+            keepRunning.set(false);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         return results;
     }
