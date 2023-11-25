@@ -31,5 +31,5 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Run sonarqube check
-        run: mvn clean verify sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=xchess -Dsonar.projectKey=xchess_xchess
+        run: mvn clean verify sonar:sonar -DskipTests -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ vars.SONAR_URL }} -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
 
