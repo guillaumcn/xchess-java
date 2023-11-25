@@ -1,6 +1,10 @@
 package com.xchess.validators;
 
 public class MoveValidator {
+
+    private MoveValidator() {
+    }
+
     public static boolean isMoveValid(String move) {
         if (move.length() == 4) {
             return SquareValidator.isSquareSyntaxValid(move.substring(0, 2)) &&

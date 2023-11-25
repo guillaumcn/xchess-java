@@ -11,7 +11,16 @@ public class StockfishOptions {
     private final Map<StockfishOptionKey, Object> optionValues;
 
     public StockfishOptions() {
-        this.optionValues = new HashMap<>();
+        this.optionValues = new EnumMap<>(StockfishOptionKey.class);
+    }
+
+    public StockfishOptions(StockfishOptions stockfishOptions) {
+        this.optionValues = new EnumMap<>(StockfishOptionKey.class);
+        for (Map.Entry<StockfishOptionKey, Object> optionEntry :
+                stockfishOptions.getOptionValues().entrySet()) {
+            this.setOption(optionEntry.getKey(),
+                    optionEntry.getValue());
+        }
     }
 
     public Map<StockfishOptionKey, Object> getOptionValues() {
@@ -40,20 +49,8 @@ public class StockfishOptions {
         return this;
     }
 
-    @Override
-    public StockfishOptions clone() throws CloneNotSupportedException {
-        StockfishOptions clone = (StockfishOptions) super.clone();
-        for (Map.Entry<StockfishOptionKey, Object> optionEntry :
-                this.optionValues.entrySet()) {
-            clone = clone.setOption(optionEntry.getKey(),
-                    optionEntry.getValue());
-        }
-
-        return clone;
-    }
-
-    public StockfishOptions merge(StockfishOptions other) throws CloneNotSupportedException {
-        StockfishOptions result = this.clone();
+    public StockfishOptions merge(StockfishOptions other) {
+        StockfishOptions result = new StockfishOptions(this);
         for (Map.Entry<StockfishOptionKey, Object> optionEntry :
                 other.getOptionValues().entrySet()) {
             result = result.setOption(optionEntry.getKey(),

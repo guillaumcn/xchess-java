@@ -21,6 +21,6 @@ public class StringStockfishOption extends StockfishOption {
 
     @Override
     public void validate(Object optionValue) {
-
+        // No validation required
     }
 }

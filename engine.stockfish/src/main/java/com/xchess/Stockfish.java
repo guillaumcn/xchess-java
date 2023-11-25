@@ -54,10 +54,10 @@ public class Stockfish {
     public String getFenPosition() throws IOException {
         this.process.writeCommand("d");
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
-                        "^Checkers.+?$"),
+                        "^Checkers.*$"),
                 this.config.getReadTimeoutInMs());
         Optional<String> fenLineOptional =
-                lines.stream().filter((line) -> line.startsWith("Fen")).findFirst();
+                lines.stream().filter(line -> line.startsWith("Fen")).findFirst();
 
         if (fenLineOptional.isEmpty()) {
             throw new IOException("Cannot find line containing fen position");
@@ -68,17 +68,17 @@ public class Stockfish {
     public List<String> getPossibleMoves() throws IOException {
         this.process.writeCommand("go perft 1");
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
-                        "^Nodes searched.+?$"),
+                        "^Nodes searched.*$"),
                 this.config.getReadTimeoutInMs());
-        return lines.stream().filter((line) -> Pattern.matches("^....: 1$",
-                line)).map((line) -> line.split(":")[0]).toList();
+        return lines.stream().filter(line -> Pattern.matches("^....: 1$",
+                line)).map(line -> line.split(":")[0]).toList();
     }
 
     public List<String> getPossibleMoves(String square) throws IOException {
         if (SquareValidator.isSquareSyntaxValid(square)) {
             throw new IllegalArgumentException("Invalid syntax for square " + square);
         }
-        return this.getPossibleMoves().stream().filter((move) -> move.startsWith(square)).toList();
+        return this.getPossibleMoves().stream().filter(move -> move.startsWith(square)).toList();
     }
 
     public boolean isMovePossible(String move) throws IOException {
@@ -164,8 +164,8 @@ public class Stockfish {
 
     private String getBestMoveFromOutput() throws IOException {
         Optional<String> bestmoveLine =
-                this.process.readLinesUntil(Pattern.compile("^bestmove.+?$"),
-                        this.config.getReadTimeoutInMs()).stream().filter((line) -> line.startsWith("bestmove")).findFirst();
+                this.process.readLinesUntil(Pattern.compile("^bestmove.*$"),
+                        this.config.getReadTimeoutInMs()).stream().filter(line -> line.startsWith("bestmove")).findFirst();
 
         if (bestmoveLine.isEmpty()) {
             throw new IOException("Cannot find best move line from output");

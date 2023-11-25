@@ -3,7 +3,7 @@ package com.xchess.option;
 public abstract class StockfishOption implements StockfishOptionInterface {
     protected StockfishOptionKey optionKey;
 
-    public StockfishOption(StockfishOptionKey name) {
+    protected StockfishOption(StockfishOptionKey name) {
         this.optionKey = name;
     }
 

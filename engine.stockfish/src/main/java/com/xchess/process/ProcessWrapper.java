@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +55,7 @@ public class ProcessWrapper {
 
     public List<String> readLinesUntil(Pattern responsePattern,
                                        int timeoutInMs) {
-        return readLinesUntil((line) -> {
+        return readLinesUntil(line -> {
             Matcher matcher = responsePattern.matcher(line);
             return matcher.matches();
         }, timeoutInMs);
@@ -63,11 +63,12 @@ public class ProcessWrapper {
 
     public List<String> readLinesUntil(String expectedResponse,
                                        int timeoutInMs) {
-        return readLinesUntil((line) -> line.equals(expectedResponse),
+        return readLinesUntil(line -> line.equals(expectedResponse),
                 timeoutInMs);
     }
 
-    private List<String> readLinesUntil(Function<String, Boolean> matchFunction, int timeoutInMs) {
+    private List<String> readLinesUntil(Predicate<String> matchPredicate,
+                                        int timeoutInMs) {
         if (timeoutInMs <= 0) {
             throw new IllegalArgumentException("Read timeout should be " +
                     "greater than 0");
@@ -81,7 +82,7 @@ public class ProcessWrapper {
                     String line = stdoutReader.readLine();
                     if (!Objects.isNull(line) && !line.isEmpty()) {
                         results.add(line);
-                        if (matchFunction.apply(line)) {
+                        if (matchPredicate.test(line)) {
                             keepRunning.set(false);
                         }
                     }

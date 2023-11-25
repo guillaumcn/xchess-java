@@ -1,7 +1,10 @@
 package com.xchess.validators;
 
 public class SquareValidator {
+    private SquareValidator() {
+    }
+
     public static boolean isSquareSyntaxValid(String square) {
-        return square.length() == 2 && square.matches("^[a-h][0-9]$");
+        return square.length() == 2 && square.matches("^[a-h][1-8]$");
     }
 }
