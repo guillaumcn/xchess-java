@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 
 public class FenSyntaxValidator {
     public static boolean isFenSyntaxValid(String fen) {
-        Pattern regexPattern = Pattern.compile("\\s*^(((?:[rnbqkpRNBQKP1-8" +
+        Pattern regexPattern = Pattern.compile("^\\s*(((?:[rnbqkpRNBQKP1-8" +
                 "]+\\/){7})[rnbqkpRNBQKP1-8]+)\\s([b|w])\\s(-|[K|Q|k|q]{1,4})" +
-                "\\s(-|[a-h][1-8])\\s(\\d+\\s\\d+)$");
+                "\\s(-|[a-h][1-8])\\s(\\d+\\s\\d+)\\s*$");
 
         Matcher regexMatcher = regexPattern.matcher(fen);
         if (!regexMatcher.matches()) {
