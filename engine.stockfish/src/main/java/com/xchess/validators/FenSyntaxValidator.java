@@ -21,10 +21,6 @@ public class FenSyntaxValidator {
         String fenBoardPart = regexMatcher.group(1);
         String[] splittedFenBoard = fenBoardPart.split("/");
 
-        if (splittedFenBoard.length != 8) {
-            return false;
-        }
-
         for (String fenPart :
                 splittedFenBoard) {
             if (!isFenPartValid(fenPart)) {
@@ -35,7 +31,6 @@ public class FenSyntaxValidator {
     }
 
     private static boolean isFenPartValid(String fenPart) {
-        int fieldSum = 0;
         boolean previousWasDigit = false;
         String[] fenPartChars = fenPart.split("");
         for (String fenPartChar :
@@ -44,15 +39,11 @@ public class FenSyntaxValidator {
                 if (previousWasDigit) {
                     return false;
                 }
-                fieldSum += Integer.parseInt(fenPartChar);
                 previousWasDigit = true;
-            } else if (PieceValidator.isPieceValid(fenPartChar)) {
-                fieldSum += 1;
-                previousWasDigit = false;
             } else {
-                return false;
+                previousWasDigit = false;
             }
         }
-        return fieldSum != 0;
+        return true;
     }
 }

@@ -7,6 +7,14 @@ import static org.junit.Assert.assertTrue;
 
 public class FenSyntaxValidatorTest {
     @Test
+    public void testShouldValidateIfValidWithWhiteSpaceAtBeginningAndEnd() {
+        assertTrue(FenSyntaxValidator.isFenSyntaxValid("   rnbqkbnr/pppppppp" +
+                "/8" +
+                "/8" +
+                "/6P1/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1   "));
+    }
+
+    @Test
     public void testShouldValidateIfValidBlackTurn() {
         assertTrue(FenSyntaxValidator.isFenSyntaxValid("rnbqkbnr/pppppppp/8" +
                 "/8" +
@@ -77,10 +85,10 @@ public class FenSyntaxValidatorTest {
     }
 
     @Test
-    public void testShouldNotValidateIfInvalidDigit() {
-        assertFalse(FenSyntaxValidator.isFenSyntaxValid("rnbqkbnr/pppppppp/8" +
+    public void testShouldNotValidateIfInvalidPiece() {
+        assertFalse(FenSyntaxValidator.isFenSyntaxValid("rnbqkbnr/ppppDppp/8" +
                 "/8" +
-                "/6P1/9/PPPPPP1P/RNBQKBNR b KQkq - 0 1"));
+                "/6P1/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1"));
     }
 
     @Test
