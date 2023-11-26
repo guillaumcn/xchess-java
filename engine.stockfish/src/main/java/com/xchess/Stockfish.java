@@ -57,6 +57,8 @@ public class Stockfish {
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
                         "^Checkers.*$"),
                 this.config.getTimeoutInMs());
+        this.waitUntilReady();
+
         Optional<String> fenLineOptional =
                 lines.stream().filter(line -> line.startsWith("Fen")).findFirst();
 
@@ -72,6 +74,7 @@ public class Stockfish {
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
                         "^Nodes searched.*$"),
                 this.config.getTimeoutInMs());
+        this.waitUntilReady();
         return lines.stream().filter(line -> Pattern.matches("^....: 1$",
                 line)).map(line -> line.split(":")[0]).toList();
     }
@@ -137,14 +140,20 @@ public class Stockfish {
         }
         for (String move :
                 moves) {
-            if (this.isMovePossible(move)) {
-                this.process.writeCommand("position fen " + this.getFenPosition() + " moves " + move);
-                this.waitUntilReady();
-            } else {
+            try {
+                if (this.isMovePossible(move)) {
+                    this.process.writeCommand("position fen " + this.getFenPosition() + " moves " + move);
+                    this.waitUntilReady();
+                } else {
+                    this.moveToFenPosition(startingPosition);
+                    throw new IllegalArgumentException("Illegal move " + move +
+                            " from position " + this.getFenPosition());
+                }
+            } catch (TimeoutException e) {
                 this.moveToFenPosition(startingPosition);
-                throw new IllegalArgumentException("Illegal move " + move +
-                        " from position " + this.getFenPosition());
+                throw e;
             }
+
         }
     }
 
@@ -162,10 +171,8 @@ public class Stockfish {
 
     public String findBestMove(BestmoveCommandBuilder options) throws IOException, TimeoutException {
         this.process.writeCommand(options.build());
-        String bestMove = this.getBestMoveFromOutput();
-        this.waitUntilReady();
 
-        return bestMove;
+        return this.getBestMoveFromOutput();
     }
 
     private String getBestMoveFromOutput() throws IOException,
@@ -173,6 +180,7 @@ public class Stockfish {
         Optional<String> bestmoveLine =
                 this.process.readLinesUntil(Pattern.compile("^bestmove.*$"),
                         this.config.getTimeoutInMs()).stream().filter(line -> line.startsWith("bestmove")).findFirst();
+        this.waitUntilReady();
 
         if (bestmoveLine.isEmpty()) {
             throw new IOException("Cannot find best move line from output");
