@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,7 @@ public class Stockfish {
         this.options = new StockfishOptions();
     }
 
-    public void start() throws IOException {
+    public void start() throws IOException, TimeoutException {
         this.process.start();
         this.waitUntilReady();
     }
@@ -37,7 +38,7 @@ public class Stockfish {
     }
 
     public void setOptions(StockfishOptions options) throws IOException,
-            CloneNotSupportedException {
+            TimeoutException {
         this.options = this.options.merge(options);
         List<String> commands = this.options.toCommands();
         for (String command :
@@ -47,12 +48,11 @@ public class Stockfish {
         }
     }
 
-    public void setDefaultOptions() throws IOException,
-            CloneNotSupportedException {
+    public void setDefaultOptions() throws IOException, TimeoutException {
         this.setOptions(new StockfishOptions().setDefaultOptions());
     }
 
-    public String getFenPosition() throws IOException {
+    public String getFenPosition() throws IOException, TimeoutException {
         this.process.writeCommand("d");
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
                         "^Checkers.*$"),
@@ -66,7 +66,8 @@ public class Stockfish {
         return fenLineOptional.get().substring(5);
     }
 
-    public List<String> getPossibleMoves() throws IOException {
+    public List<String> getPossibleMoves() throws IOException,
+            TimeoutException {
         this.process.writeCommand("go perft 1");
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
                         "^Nodes searched.*$"),
@@ -75,14 +76,16 @@ public class Stockfish {
                 line)).map(line -> line.split(":")[0]).toList();
     }
 
-    public List<String> getPossibleMoves(String square) throws IOException {
+    public List<String> getPossibleMoves(String square) throws IOException,
+            TimeoutException {
         if (SquareValidator.isSquareSyntaxValid(square)) {
             throw new IllegalArgumentException("Invalid syntax for square " + square);
         }
         return this.getPossibleMoves().stream().filter(move -> move.startsWith(square)).toList();
     }
 
-    public boolean isMovePossible(String move) throws IOException {
+    public boolean isMovePossible(String move) throws IOException,
+            TimeoutException {
         if (MoveValidator.isMoveValid(move)) {
             throw new IllegalArgumentException("Invalid syntax for move " + move);
         }
@@ -105,7 +108,7 @@ public class Stockfish {
                 String bestMove =
                         tempStockfish.findBestMove(new BestmoveCommandBuilder().setDepth(10));
                 isValid.set(!Objects.isNull(bestMove));
-            } catch (IOException e) {
+            } catch (IOException | TimeoutException e) {
                 isValid.set(false);
             }
 
@@ -125,7 +128,7 @@ public class Stockfish {
         return isValid.get();
     }
 
-    public void move(List<String> moves) throws IOException {
+    public void move(List<String> moves) throws IOException, TimeoutException {
         String startingPosition = this.getFenPosition();
         int invalidMoveIndex =
                 moves.stream().map(MoveValidator::isMoveValid).toList().indexOf(false);
@@ -145,18 +148,19 @@ public class Stockfish {
         }
     }
 
-    public String moveToStartPosition() throws IOException {
+    public String moveToStartPosition() throws IOException, TimeoutException {
         this.process.writeCommand("position startpos");
         this.waitUntilReady();
         return this.getFenPosition();
     }
 
-    public void moveToFenPosition(String fen) throws IOException {
+    public void moveToFenPosition(String fen) throws IOException,
+            TimeoutException {
         this.process.writeCommand("position fen " + fen);
         this.waitUntilReady();
     }
 
-    public String findBestMove(BestmoveCommandBuilder options) throws IOException {
+    public String findBestMove(BestmoveCommandBuilder options) throws IOException, TimeoutException {
         this.process.writeCommand(options.build());
         String bestMove = this.getBestMoveFromOutput();
         this.waitUntilReady();
@@ -164,7 +168,8 @@ public class Stockfish {
         return bestMove;
     }
 
-    private String getBestMoveFromOutput() throws IOException {
+    private String getBestMoveFromOutput() throws IOException,
+            TimeoutException {
         Optional<String> bestmoveLine =
                 this.process.readLinesUntil(Pattern.compile("^bestmove.*$"),
                         this.config.getTimeoutInMs()).stream().filter(line -> line.startsWith("bestmove")).findFirst();
@@ -179,13 +184,13 @@ public class Stockfish {
     public boolean healthCheck() {
         try {
             this.waitUntilReady();
-        } catch (IOException e) {
+        } catch (IOException | TimeoutException e) {
             return false;
         }
         return true;
     }
 
-    private void waitUntilReady() throws IOException {
+    private void waitUntilReady() throws IOException, TimeoutException {
         this.process.writeCommand("isready");
         this.process.readLinesUntil("readyok",
                 this.config.getTimeoutInMs());

@@ -1,10 +1,8 @@
 package com.xchess.process;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +52,7 @@ public class ProcessWrapper {
     }
 
     public List<String> readLinesUntil(Pattern responsePattern,
-                                       int timeoutInMs) {
+                                       int timeoutInMs) throws TimeoutException, IOException {
         return readLinesUntil(line -> {
             Matcher matcher = responsePattern.matcher(line);
             return matcher.matches();
@@ -62,46 +60,21 @@ public class ProcessWrapper {
     }
 
     public List<String> readLinesUntil(String expectedResponse,
-                                       int timeoutInMs) {
+                                       int timeoutInMs) throws TimeoutException, IOException {
         return readLinesUntil(line -> line.equals(expectedResponse),
                 timeoutInMs);
     }
 
     private List<String> readLinesUntil(Predicate<String> matchPredicate,
-                                        int timeoutInMs) {
+                                        int timeoutInMs) throws TimeoutException, IOException {
         if (timeoutInMs <= 0) {
             throw new IllegalArgumentException("Read timeout should be " +
                     "greater than 0");
         }
 
-        List<String> results = new ArrayList<>();
-        AtomicBoolean keepRunning = new AtomicBoolean(true);
-        Thread t = new Thread(() -> {
-            try {
-                while (keepRunning.get()) {
-                    String line = stdoutReader.readLine();
-                    if (!Objects.isNull(line) && !line.isEmpty()) {
-                        results.add(line);
-                        if (matchPredicate.test(line)) {
-                            keepRunning.set(false);
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        t.start();
-        try {
-            t.join(timeoutInMs);
-            // Timeout do not stop thread, ensure it will be stopped by
-            // setting keepRunning to false
-            keepRunning.set(false);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        return results;
+        StdoutReader stdoutReader = new StdoutReader(this.stdoutReader,
+                matchPredicate, timeoutInMs);
+        return stdoutReader.getLines();
     }
 
     public void writeCommand(String command) throws IOException {

@@ -7,12 +7,13 @@ import com.xchess.process.ProcessWrapper;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 public class EngineWorkerStockfishImpl implements EngineWorker {
     private Stockfish stockfish;
 
     @Override
-    public void start() throws IOException {
+    public void start() throws IOException, TimeoutException {
         StockfishConfig stockfishConfig =
                 new StockfishConfig().setTimeoutInMs(1000);
         this.stockfish = new Stockfish(new ProcessWrapper("stockfish"),

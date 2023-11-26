@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
@@ -51,7 +52,7 @@ public class ProcessWrapperTest {
     }
 
     @Test
-    public void shouldReturnInputMessagesListWhenReadUntilPattern() throws IOException, InterruptedException {
+    public void shouldReturnInputMessagesListWhenReadUntilPattern() throws IOException, TimeoutException {
         String breakMessage = "STOP";
         List<String> expected = prepareLinesRead(breakMessage);
         assertEquals(expected, this.subject.readLinesUntil(Pattern.compile(
@@ -59,17 +60,18 @@ public class ProcessWrapperTest {
     }
 
     @Test
-    public void shouldReturnInputMessagesListWhenReadUntilString() throws IOException, InterruptedException {
+    public void shouldReturnInputMessagesListWhenReadUntilString() throws IOException, TimeoutException {
         String breakMessage = "STOP";
         List<String> expected = prepareLinesRead(breakMessage);
         assertEquals(expected, this.subject.readLinesUntil(breakMessage, 5000));
     }
 
     @Test
-    public void shouldReturnInputMessagesListWhenReadReachesTimeout() throws InterruptedException {
+    public void shouldThrowExceptionWhenReadReachesTimeout() {
         String breakMessage = "STOP";
-        assertEquals(new ArrayList<>(),
-                this.subject.readLinesUntil(breakMessage, 1));
+        assertThrows(TimeoutException.class, () -> {
+            this.subject.readLinesUntil(breakMessage, 1);
+        });
     }
 
     @Test
@@ -77,6 +79,14 @@ public class ProcessWrapperTest {
         String breakMessage = "STOP";
         assertThrows(IllegalArgumentException.class,
                 () -> this.subject.readLinesUntil(breakMessage, 0));
+    }
+
+    @Test
+    public void shouldThrowExceptionIfReadlineThrowsException() throws IOException {
+        String breakMessage = "STOP";
+        when(this.stdoutReader.readLine()).thenThrow(IOException.class);
+        assertThrows(IOException.class,
+                () -> this.subject.readLinesUntil(breakMessage, 5000));
     }
 
     @Test
