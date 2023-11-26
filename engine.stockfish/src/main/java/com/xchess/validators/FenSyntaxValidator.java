@@ -10,7 +10,7 @@ public class FenSyntaxValidator {
 
     public static boolean isFenSyntaxValid(String fen) {
         Pattern regexPattern = Pattern.compile("^\\s*(((?:[rnbqkpRNBQKP1-8" +
-                "]+\\/){7})[rnbqkpRNBQKP1-8]+)\\s([b|w])\\s(-|[K|Q|k|q]{1,4})" +
+                "]+/){7})[rnbqkpRNBQKP1-8]+)\\s([b|w])\\s(-|[KQkq]{1,4})" +
                 "\\s(-|[a-h][1-8])\\s(\\d+\\s\\d+)\\s*$");
 
         Matcher regexMatcher = regexPattern.matcher(fen);
@@ -18,15 +18,15 @@ public class FenSyntaxValidator {
             return false;
         }
 
-        String entireFen = regexMatcher.group(0);
-        String[] splittedFen = entireFen.split("/");
+        String fenBoardPart = regexMatcher.group(1);
+        String[] splittedFenBoard = fenBoardPart.split("/");
 
-        if (splittedFen.length != 8) {
+        if (splittedFenBoard.length != 8) {
             return false;
         }
 
         for (String fenPart :
-                splittedFen) {
+                splittedFenBoard) {
             if (!isFenPartValid(fenPart)) {
                 return false;
             }
@@ -53,9 +53,6 @@ public class FenSyntaxValidator {
                 return false;
             }
         }
-        if (fieldSum == 0) {
-            return false;
-        }
-        return true;
+        return fieldSum != 0;
     }
 }
