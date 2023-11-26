@@ -1,4 +1,4 @@
-package com.xchess.validators;
+package com.xchess.stockfish.validators;
 
 import org.junit.Test;
 

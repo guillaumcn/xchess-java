@@ -1,4 +1,4 @@
-package com.xchess.validators;
+package com.xchess.stockfish.validators;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;

@@ -1,4 +1,4 @@
-package com.xchess.command;
+package com.xchess.stockfish.command;
 
 import java.util.List;
 import java.util.Objects;

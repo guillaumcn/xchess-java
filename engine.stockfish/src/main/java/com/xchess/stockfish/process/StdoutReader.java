@@ -1,4 +1,4 @@
-package com.xchess.process;
+package com.xchess.stockfish.process;
 
 import java.io.BufferedReader;
 import java.io.IOException;

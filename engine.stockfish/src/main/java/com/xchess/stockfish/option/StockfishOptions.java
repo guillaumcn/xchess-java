@@ -1,8 +1,8 @@
-package com.xchess.option;
+package com.xchess.stockfish.option;
 
-import com.xchess.option.impl.BooleanStockfishOption;
-import com.xchess.option.impl.NumberStockfishOption;
-import com.xchess.option.impl.StringStockfishOption;
+import com.xchess.stockfish.option.impl.BooleanStockfishOption;
+import com.xchess.stockfish.option.impl.NumberStockfishOption;
+import com.xchess.stockfish.option.impl.StringStockfishOption;
 
 import java.util.*;
 

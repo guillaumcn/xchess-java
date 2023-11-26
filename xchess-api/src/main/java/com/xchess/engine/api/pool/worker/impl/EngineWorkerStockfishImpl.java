@@ -1,9 +1,9 @@
 package com.xchess.engine.api.pool.worker.impl;
 
-import com.xchess.Stockfish;
-import com.xchess.config.StockfishConfig;
+import com.xchess.stockfish.Stockfish;
+import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.engine.api.pool.worker.EngineWorker;
-import com.xchess.process.ProcessWrapper;
+import com.xchess.stockfish.process.ProcessWrapper;
 
 import java.io.IOException;
 import java.util.List;
