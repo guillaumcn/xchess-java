@@ -1,5 +1,6 @@
 package com.xchess;
 
+import com.xchess.command.BestmoveCommandBuilder;
 import com.xchess.config.StockfishConfig;
 import com.xchess.option.StockfishOptions;
 import com.xchess.process.ProcessWrapper;
@@ -55,7 +56,7 @@ public class Stockfish {
         this.process.writeCommand("d");
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
                         "^Checkers.*$"),
-                this.config.getReadTimeoutInMs());
+                this.config.getTimeoutInMs());
         Optional<String> fenLineOptional =
                 lines.stream().filter(line -> line.startsWith("Fen")).findFirst();
 
@@ -69,7 +70,7 @@ public class Stockfish {
         this.process.writeCommand("go perft 1");
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
                         "^Nodes searched.*$"),
-                this.config.getReadTimeoutInMs());
+                this.config.getTimeoutInMs());
         return lines.stream().filter(line -> Pattern.matches("^....: 1$",
                 line)).map(line -> line.split(":")[0]).toList();
     }
@@ -101,7 +102,8 @@ public class Stockfish {
             try {
                 tempStockfish.start();
                 tempStockfish.moveToFenPosition(fen);
-                String bestMove = tempStockfish.findBestMove();
+                String bestMove =
+                        tempStockfish.findBestMove(new BestmoveCommandBuilder().setDepth(10));
                 isValid.set(!Objects.isNull(bestMove));
             } catch (IOException e) {
                 isValid.set(false);
@@ -154,8 +156,8 @@ public class Stockfish {
         this.waitUntilReady();
     }
 
-    public String findBestMove() throws IOException {
-        this.process.writeCommand("go depth 10");
+    public String findBestMove(BestmoveCommandBuilder options) throws IOException {
+        this.process.writeCommand(options.build());
         String bestMove = this.getBestMoveFromOutput();
         this.waitUntilReady();
 
@@ -165,7 +167,7 @@ public class Stockfish {
     private String getBestMoveFromOutput() throws IOException {
         Optional<String> bestmoveLine =
                 this.process.readLinesUntil(Pattern.compile("^bestmove.*$"),
-                        this.config.getReadTimeoutInMs()).stream().filter(line -> line.startsWith("bestmove")).findFirst();
+                        this.config.getTimeoutInMs()).stream().filter(line -> line.startsWith("bestmove")).findFirst();
 
         if (bestmoveLine.isEmpty()) {
             throw new IOException("Cannot find best move line from output");
@@ -186,6 +188,6 @@ public class Stockfish {
     private void waitUntilReady() throws IOException {
         this.process.writeCommand("isready");
         this.process.readLinesUntil("readyok",
-                this.config.getReadTimeoutInMs());
+                this.config.getTimeoutInMs());
     }
 }

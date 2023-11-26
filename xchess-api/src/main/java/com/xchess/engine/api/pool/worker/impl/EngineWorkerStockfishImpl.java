@@ -14,7 +14,7 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
     @Override
     public void start() throws IOException {
         StockfishConfig stockfishConfig =
-                new StockfishConfig().setReadTimeoutInMs(1000);
+                new StockfishConfig().setTimeoutInMs(1000);
         this.stockfish = new Stockfish(new ProcessWrapper("stockfish"),
                 stockfishConfig);
         this.stockfish.start();

@@ -3,18 +3,18 @@ package com.xchess.config;
 import com.xchess.constants.Constants;
 
 public class StockfishConfig {
-    private int readTimeoutInMs;
+    private int timeoutInMs;
 
     public StockfishConfig() {
-        this.readTimeoutInMs = Constants.DEFAULT_READ_TIMEOUT;
+        this.timeoutInMs = Constants.DEFAULT_TIMEOUT;
     }
 
-    public int getReadTimeoutInMs() {
-        return readTimeoutInMs;
+    public int getTimeoutInMs() {
+        return timeoutInMs;
     }
 
-    public StockfishConfig setReadTimeoutInMs(int readTimeoutInMs) {
-        this.readTimeoutInMs = readTimeoutInMs;
+    public StockfishConfig setTimeoutInMs(int timeoutInMs) {
+        this.timeoutInMs = timeoutInMs;
         return this;
     }
 }
