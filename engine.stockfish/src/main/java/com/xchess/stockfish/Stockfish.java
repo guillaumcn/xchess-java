@@ -1,7 +1,9 @@
 package com.xchess.stockfish;
 
-import com.xchess.stockfish.command.BestmoveCommandBuilder;
+import com.xchess.stockfish.command.EvaluationCommandBuilder;
 import com.xchess.stockfish.config.StockfishConfig;
+import com.xchess.stockfish.evaluation.StockfishEvaluation;
+import com.xchess.stockfish.evaluation.StockfishEvaluationType;
 import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.stockfish.process.ProcessWrapper;
 import com.xchess.stockfish.validators.FenSyntaxValidator;
@@ -9,11 +11,12 @@ import com.xchess.stockfish.validators.MoveValidator;
 import com.xchess.stockfish.validators.SquareValidator;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Stockfish {
@@ -59,13 +62,10 @@ public class Stockfish {
                 this.config.getTimeoutInMs());
         this.waitUntilReady();
 
-        Optional<String> fenLineOptional =
-                lines.stream().filter(line -> line.startsWith("Fen")).findFirst();
+        String fenLineOptional =
+                lines.stream().filter(line -> line.startsWith("Fen")).findFirst().orElseThrow(IOException::new);
 
-        if (fenLineOptional.isEmpty()) {
-            throw new IOException("Cannot find line containing fen position");
-        }
-        return fenLineOptional.get().substring(5);
+        return fenLineOptional.substring(5);
     }
 
     public List<String> getPossibleMoves() throws IOException,
@@ -109,7 +109,7 @@ public class Stockfish {
                 tempStockfish.start();
                 tempStockfish.moveToFenPosition(fen);
                 String bestMove =
-                        tempStockfish.findBestMove(new BestmoveCommandBuilder().setDepth(10));
+                        tempStockfish.findBestMove(new EvaluationCommandBuilder().setDepth(10));
                 isValid.set(!Objects.isNull(bestMove));
             } catch (IOException | TimeoutException e) {
                 isValid.set(false);
@@ -169,27 +169,46 @@ public class Stockfish {
         this.waitUntilReady();
     }
 
-    public String findBestMove(BestmoveCommandBuilder options) throws IOException, TimeoutException {
+    public String findBestMove(EvaluationCommandBuilder options) throws IOException, TimeoutException {
         this.process.writeCommand(options.build());
 
         return this.getBestMoveFromOutput();
     }
 
+    public StockfishEvaluation getPositionEvaluation(EvaluationCommandBuilder options) throws IOException,
+            TimeoutException {
+        String currentFen = this.getFenPosition();
+        int multiplier = currentFen.contains("w") ? 1 : -1;
+
+        this.process.writeCommand(options.build());
+        List<String> evaluationLines = this.getEvaluationLines();
+        Collections.reverse(evaluationLines);
+        Pattern scorePattern = Pattern.compile("^info.*score\\s(cp|mate)\\s" +
+                "(-?[0-9]+).*$");
+
+        String lastInfoLine =
+                evaluationLines.stream().filter((line) -> scorePattern.matcher(line).matches()).findFirst().orElseThrow(IOException::new);
+        Matcher scoreMatcher = scorePattern.matcher(lastInfoLine);
+        String type = scoreMatcher.group(1);
+        String value = scoreMatcher.group(2);
+        return new StockfishEvaluation(type.equals("cp") ?
+                StockfishEvaluationType.CENTIPAWNS :
+                StockfishEvaluationType.MATE,
+                Integer.parseInt(value) * multiplier);
+    }
+
     private String getBestMoveFromOutput() throws IOException,
             TimeoutException {
-        List<String> bestMoveLines = getBestMoveLines();
-        Optional<String> bestmoveLine =
-                bestMoveLines.stream().filter(line -> line.startsWith(
-                        "bestmove")).findFirst();
+        List<String> evaluationLines = getEvaluationLines();
+        String bestmoveLine =
+                evaluationLines.stream().filter(line -> line.startsWith(
+                        "bestmove")).findFirst().orElseThrow(IOException::new);
 
-        if (bestmoveLine.isEmpty()) {
-            throw new IOException("Cannot find best move line from output");
-        }
-        String bestMove = bestmoveLine.get().split(" ")[1];
+        String bestMove = bestmoveLine.split(" ")[1];
         return bestMove.equals("(none)") ? null : bestMove;
     }
 
-    private List<String> getBestMoveLines() throws TimeoutException,
+    private List<String> getEvaluationLines() throws TimeoutException,
             IOException {
         List<String> bestMoveLines =
                 this.process.readLinesUntil(Pattern.compile("^bestmove.*$"),

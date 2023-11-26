@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class BestmoveCommandBuilder {
+public class EvaluationCommandBuilder {
     private List<String> searchMoves;
     private Integer wtime;
     private Integer btime;
@@ -16,55 +16,55 @@ public class BestmoveCommandBuilder {
     private Integer mate;
     private Integer movetime;
 
-    public BestmoveCommandBuilder() {
+    public EvaluationCommandBuilder() {
     }
 
-    public BestmoveCommandBuilder setSearchMoves(List<String> searchMoves) {
+    public EvaluationCommandBuilder setSearchMoves(List<String> searchMoves) {
         this.searchMoves = searchMoves;
         return this;
     }
 
-    public BestmoveCommandBuilder setWtime(Integer wtime) {
+    public EvaluationCommandBuilder setWtime(Integer wtime) {
         this.wtime = wtime;
         return this;
     }
 
-    public BestmoveCommandBuilder setBtime(Integer btime) {
+    public EvaluationCommandBuilder setBtime(Integer btime) {
         this.btime = btime;
         return this;
     }
 
-    public BestmoveCommandBuilder setWinc(Integer winc) {
+    public EvaluationCommandBuilder setWinc(Integer winc) {
         this.winc = winc;
         return this;
     }
 
-    public BestmoveCommandBuilder setBinc(Integer binc) {
+    public EvaluationCommandBuilder setBinc(Integer binc) {
         this.binc = binc;
         return this;
     }
 
-    public BestmoveCommandBuilder setMovestogo(Integer movestogo) {
+    public EvaluationCommandBuilder setMovestogo(Integer movestogo) {
         this.movestogo = movestogo;
         return this;
     }
 
-    public BestmoveCommandBuilder setDepth(Integer depth) {
+    public EvaluationCommandBuilder setDepth(Integer depth) {
         this.depth = depth;
         return this;
     }
 
-    public BestmoveCommandBuilder setNodes(Integer nodes) {
+    public EvaluationCommandBuilder setNodes(Integer nodes) {
         this.nodes = nodes;
         return this;
     }
 
-    public BestmoveCommandBuilder setMate(Integer mate) {
+    public EvaluationCommandBuilder setMate(Integer mate) {
         this.mate = mate;
         return this;
     }
 
-    public BestmoveCommandBuilder setMovetime(Integer movetime) {
+    public EvaluationCommandBuilder setMovetime(Integer movetime) {
         this.movetime = movetime;
         return this;
     }
