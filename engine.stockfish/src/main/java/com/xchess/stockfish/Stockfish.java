@@ -23,21 +23,28 @@ public class Stockfish {
     private final ProcessWrapper process;
     private final StockfishConfig config;
     private StockfishOptions options;
+    private final Float engineVersion;
 
 
-    public Stockfish(ProcessWrapper process, StockfishConfig config) {
+    public Stockfish(ProcessWrapper process, StockfishConfig config) throws IOException, TimeoutException {
         this.process = process;
         this.config = config;
         this.options = new StockfishOptions();
-    }
 
-    public void start() throws IOException, TimeoutException {
         this.process.start();
-        this.waitUntilReady();
+        this.process.writeCommand("uci");
+        List<String> initLines = this.waitUntilReady();
+        String initLine = initLines.stream().filter(line -> line.startsWith(
+                "Stockfish")).findFirst().orElseThrow(IOException::new);
+        this.engineVersion = Float.parseFloat(initLine.split(" ")[1]);
     }
 
     public void stop() throws IOException {
         this.process.stop();
+    }
+
+    public Float getEngineVersion() {
+        return engineVersion;
     }
 
     public void setOptions(StockfishOptions options) throws IOException,
@@ -102,11 +109,11 @@ public class Stockfish {
         AtomicBoolean isValid = new AtomicBoolean(false);
 
         Thread t = new Thread(() -> {
-            Stockfish tempStockfish =
-                    new Stockfish(new ProcessWrapper(this.process.getCommand()),
-                            this.config);
+            Stockfish tempStockfish = null;
             try {
-                tempStockfish.start();
+                tempStockfish =
+                        new Stockfish(new ProcessWrapper(this.process.getCommand()),
+                                this.config);
                 tempStockfish.moveToFenPosition(fen);
                 String bestMove =
                         tempStockfish.findBestMove(new EvaluationCommandBuilder().setDepth(10));
@@ -116,7 +123,9 @@ public class Stockfish {
             }
 
             try {
-                tempStockfish.stop();
+                if (!Objects.isNull(tempStockfish)) {
+                    tempStockfish.stop();
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -226,9 +235,9 @@ public class Stockfish {
         return true;
     }
 
-    private void waitUntilReady() throws IOException, TimeoutException {
+    private List<String> waitUntilReady() throws IOException, TimeoutException {
         this.process.writeCommand("isready");
-        this.process.readLinesUntil("readyok",
+        return this.process.readLinesUntil("readyok",
                 this.config.getTimeoutInMs());
     }
 }

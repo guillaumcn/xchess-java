@@ -10,5 +10,7 @@ public interface EngineWorker {
 
     boolean isValid();
 
+    float getEngineVersion();
+
     List<String> getPossibleMoves(String fen);
 }

@@ -1,8 +1,8 @@
 package com.xchess.engine.api.pool.worker.impl;
 
+import com.xchess.engine.api.pool.worker.EngineWorker;
 import com.xchess.stockfish.Stockfish;
 import com.xchess.stockfish.config.StockfishConfig;
-import com.xchess.engine.api.pool.worker.EngineWorker;
 import com.xchess.stockfish.process.ProcessWrapper;
 
 import java.io.IOException;
@@ -18,7 +18,6 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
                 new StockfishConfig().setTimeoutInMs(1000);
         this.stockfish = new Stockfish(new ProcessWrapper("stockfish"),
                 stockfishConfig);
-        this.stockfish.start();
     }
 
     @Override
@@ -29,6 +28,11 @@ public class EngineWorkerStockfishImpl implements EngineWorker {
     @Override
     public boolean isValid() {
         return this.stockfish.healthCheck();
+    }
+
+    @Override
+    public float getEngineVersion() {
+        return this.stockfish.getEngineVersion();
     }
 
     @Override
