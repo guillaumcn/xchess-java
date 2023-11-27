@@ -1,9 +1,10 @@
 package com.xchess.stockfish;
 
+import com.xchess.ChessEngine;
+import com.xchess.evaluation.ChessEngineEvaluation;
+import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.stockfish.command.EvaluationCommandBuilder;
 import com.xchess.stockfish.config.StockfishConfig;
-import com.xchess.stockfish.evaluation.StockfishEvaluation;
-import com.xchess.stockfish.evaluation.StockfishEvaluationType;
 import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.stockfish.process.ProcessWrapper;
 import com.xchess.stockfish.validators.FenSyntaxValidator;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-public class Stockfish {
+public class Stockfish implements ChessEngine {
     private final ProcessWrapper process;
     private final StockfishConfig config;
     private StockfishOptions options;
@@ -183,7 +184,7 @@ public class Stockfish {
         return this.getBestMoveFromOutput();
     }
 
-    public StockfishEvaluation getPositionEvaluation(EvaluationCommandBuilder options) throws IOException,
+    public ChessEngineEvaluation getPositionEvaluation(EvaluationCommandBuilder options) throws IOException,
             TimeoutException {
         String currentFen = this.getFenPosition();
         int multiplier = currentFen.contains("w") ? 1 : -1;
@@ -199,9 +200,9 @@ public class Stockfish {
         String[] splittedLastInfoLine = lastInfoLine.split(" ");
         String type = splittedLastInfoLine[1];
         String value = splittedLastInfoLine[2];
-        return new StockfishEvaluation(type.equals("cp") ?
-                StockfishEvaluationType.CENTIPAWNS :
-                StockfishEvaluationType.MATE,
+        return new ChessEngineEvaluation(type.equals("cp") ?
+                ChessEngineEvaluationType.CENTIPAWNS :
+                ChessEngineEvaluationType.MATE,
                 Integer.parseInt(value) * multiplier);
     }
 

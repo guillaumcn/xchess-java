@@ -12,7 +12,7 @@
 
     <modules>
         <module>xchess-api</module>
-        <module>engine.stockfish</module>
+        <module>engines</module>
     </modules>
 
     <profiles>
