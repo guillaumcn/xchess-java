@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Stockfish {
@@ -192,14 +191,14 @@ public class Stockfish {
         this.process.writeCommand(options.build());
         List<String> evaluationLines = this.getEvaluationLines();
         Collections.reverse(evaluationLines);
-        Pattern scorePattern = Pattern.compile("^info.*score\\s(cp|mate)\\s" +
-                "(-?[0-9]+).*$");
 
         String lastInfoLine =
-                evaluationLines.stream().filter((line) -> scorePattern.matcher(line).matches()).findFirst().orElseThrow(IOException::new);
-        Matcher scoreMatcher = scorePattern.matcher(lastInfoLine);
-        String type = scoreMatcher.group(1);
-        String value = scoreMatcher.group(2);
+                evaluationLines.stream().filter((line) -> line.contains("info"
+                ) && line.contains("score")).findFirst().orElseThrow(IOException::new);
+        lastInfoLine = lastInfoLine.substring(lastInfoLine.indexOf("score"));
+        String[] splittedLastInfoLine = lastInfoLine.split(" ");
+        String type = splittedLastInfoLine[1];
+        String value = splittedLastInfoLine[2];
         return new StockfishEvaluation(type.equals("cp") ?
                 StockfishEvaluationType.CENTIPAWNS :
                 StockfishEvaluationType.MATE,
