@@ -49,7 +49,7 @@ public class Stockfish {
     public void setOptions(StockfishOptions options) throws IOException,
             TimeoutException {
         this.options = this.options.merge(options);
-        List<String> commands = this.options.toCommands();
+        List<String> commands = this.options.getCommands();
         for (String command :
                 commands) {
             this.process.writeCommand(command);
@@ -58,7 +58,7 @@ public class Stockfish {
     }
 
     public void setDefaultOptions() throws IOException, TimeoutException {
-        this.setOptions(new StockfishOptions().setDefaultOptions());
+        this.setOptions(StockfishOptions.getDefaultOptions());
     }
 
     public String getFenPosition() throws IOException, TimeoutException {
