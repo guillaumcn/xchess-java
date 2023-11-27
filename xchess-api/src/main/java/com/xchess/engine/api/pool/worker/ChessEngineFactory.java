@@ -8,13 +8,28 @@ import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.DestroyMode;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ChessEngineFactory extends BasePooledObjectFactory<ChessEngine> {
+    private final ChessEngineProperties properties;
+
+    @Autowired
+    public ChessEngineFactory(ChessEngineProperties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public ChessEngine create() throws Exception {
-        return new Stockfish(new ProcessWrapper("stockfish"),
-                new StockfishConfig().setTimeoutInMs(1000));
+        if (this.properties.getType().equals("stockfish")) {
+            return new Stockfish(new ProcessWrapper(this.properties.getCommand()),
+                    new StockfishConfig().setTimeoutInMs(this.properties.getTimeout()));
+        }
+        throw new InvalidPropertyException(ChessEngineProperties.class,
+                "chess.engine.type", "Invalid property value");
+
     }
 
     @Override

@@ -18,7 +18,8 @@ public class PoolWrapper {
     private final GenericObjectPool<ChessEngine> pool;
 
     @Autowired
-    public PoolWrapper(PoolProperties poolProperties) throws Exception {
+    public PoolWrapper(PoolProperties poolProperties,
+                       ChessEngineFactory chessEngineFactory) throws Exception {
         GenericObjectPoolConfig<ChessEngine> config =
                 new GenericObjectPoolConfig<>();
         config.setMinIdle(poolProperties.getMinIdle());
@@ -26,7 +27,7 @@ public class PoolWrapper {
         config.setSoftMinEvictableIdleDuration(Duration.ofMillis(poolProperties.getEvictableIdleDurationInMs()));
         config.setTimeBetweenEvictionRuns(Duration.ofMillis(poolProperties.getTimeBetweenEvictionRunsInMs()));
 
-        this.pool = new GenericObjectPool<>(new ChessEngineFactory(), config);
+        this.pool = new GenericObjectPool<>(chessEngineFactory, config);
         this.pool.preparePool();
     }
 
