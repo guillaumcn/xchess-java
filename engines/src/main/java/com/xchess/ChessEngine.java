@@ -2,7 +2,6 @@ package com.xchess;
 
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.parameters.EvaluationParameters;
-import com.xchess.stockfish.option.StockfishOptions;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,11 +11,6 @@ public interface ChessEngine {
     void stop() throws IOException;
 
     Float getEngineVersion();
-
-    void setOptions(StockfishOptions options) throws IOException,
-            TimeoutException;
-
-    void setDefaultOptions() throws IOException, TimeoutException;
 
     String getFenPosition() throws IOException, TimeoutException;
 

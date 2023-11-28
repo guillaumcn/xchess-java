@@ -25,8 +25,8 @@ public class Stockfish implements ChessEngine {
     private StockfishOptions options;
     private final Float engineVersion;
 
-
-    public Stockfish(ProcessWrapper process, StockfishConfig config) throws IOException, TimeoutException {
+    public Stockfish(ProcessWrapper process, StockfishConfig config) throws IOException,
+            TimeoutException {
         this.process = process;
         this.config = config;
         this.options = new StockfishOptions();
@@ -37,14 +37,19 @@ public class Stockfish implements ChessEngine {
         String initLine = initLines.stream().filter(line -> line.startsWith(
                 "Stockfish")).findFirst().orElseThrow(IOException::new);
         this.engineVersion = Float.parseFloat(initLine.split(" ")[1]);
+
+        this.setOptions(options);
+    }
+
+    public Stockfish(ProcessWrapper process, StockfishConfig config,
+                     StockfishOptions options) throws IOException,
+            TimeoutException {
+        this(process, config);
+        this.setOptions(options);
     }
 
     public void stop() throws IOException {
         this.process.stop();
-    }
-
-    public Float getEngineVersion() {
-        return engineVersion;
     }
 
     public void setOptions(StockfishOptions options) throws IOException,
@@ -58,8 +63,8 @@ public class Stockfish implements ChessEngine {
         }
     }
 
-    public void setDefaultOptions() throws IOException, TimeoutException {
-        this.setOptions(StockfishOptions.getDefaultOptions());
+    public Float getEngineVersion() {
+        return engineVersion;
     }
 
     public String getFenPosition() throws IOException, TimeoutException {
