@@ -3,7 +3,7 @@ package com.xchess.stockfish;
 import com.xchess.ChessEngine;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
-import com.xchess.stockfish.command.EvaluationCommandBuilder;
+import com.xchess.evaluation.parameters.EvaluationParameters;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.stockfish.process.ProcessWrapper;
@@ -116,7 +116,7 @@ public class Stockfish implements ChessEngine {
                                 this.config);
                 tempStockfish.moveToFenPosition(fen);
                 String bestMove =
-                        tempStockfish.findBestMove(new EvaluationCommandBuilder().setDepth(10));
+                        tempStockfish.findBestMove(new EvaluationParameters().setDepth(10));
                 isValid.set(!Objects.isNull(bestMove));
             } catch (IOException | TimeoutException e) {
                 isValid.set(false);
@@ -178,13 +178,13 @@ public class Stockfish implements ChessEngine {
         this.waitUntilReady();
     }
 
-    public String findBestMove(EvaluationCommandBuilder options) throws IOException, TimeoutException {
+    public String findBestMove(EvaluationParameters options) throws IOException, TimeoutException {
         this.process.writeCommand(options.build());
 
         return this.getBestMoveFromOutput();
     }
 
-    public ChessEngineEvaluation getPositionEvaluation(EvaluationCommandBuilder options) throws IOException,
+    public ChessEngineEvaluation getPositionEvaluation(EvaluationParameters options) throws IOException,
             TimeoutException {
         String currentFen = this.getFenPosition();
         int multiplier = currentFen.contains("w") ? 1 : -1;

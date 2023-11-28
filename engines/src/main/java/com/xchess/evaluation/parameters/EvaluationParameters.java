@@ -1,10 +1,10 @@
-package com.xchess.stockfish.command;
+package com.xchess.evaluation.parameters;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class EvaluationCommandBuilder {
+public class EvaluationParameters {
     private List<String> searchMoves;
     private Integer wtime;
     private Integer btime;
@@ -16,55 +16,55 @@ public class EvaluationCommandBuilder {
     private Integer mate;
     private Integer movetime;
 
-    public EvaluationCommandBuilder() {
+    public EvaluationParameters() {
     }
 
-    public EvaluationCommandBuilder setSearchMoves(List<String> searchMoves) {
+    public EvaluationParameters setSearchMoves(List<String> searchMoves) {
         this.searchMoves = searchMoves;
         return this;
     }
 
-    public EvaluationCommandBuilder setWtime(Integer wtime) {
+    public EvaluationParameters setWtime(Integer wtime) {
         this.wtime = wtime;
         return this;
     }
 
-    public EvaluationCommandBuilder setBtime(Integer btime) {
+    public EvaluationParameters setBtime(Integer btime) {
         this.btime = btime;
         return this;
     }
 
-    public EvaluationCommandBuilder setWinc(Integer winc) {
+    public EvaluationParameters setWinc(Integer winc) {
         this.winc = winc;
         return this;
     }
 
-    public EvaluationCommandBuilder setBinc(Integer binc) {
+    public EvaluationParameters setBinc(Integer binc) {
         this.binc = binc;
         return this;
     }
 
-    public EvaluationCommandBuilder setMovestogo(Integer movestogo) {
+    public EvaluationParameters setMovestogo(Integer movestogo) {
         this.movestogo = movestogo;
         return this;
     }
 
-    public EvaluationCommandBuilder setDepth(Integer depth) {
+    public EvaluationParameters setDepth(Integer depth) {
         this.depth = depth;
         return this;
     }
 
-    public EvaluationCommandBuilder setNodes(Integer nodes) {
+    public EvaluationParameters setNodes(Integer nodes) {
         this.nodes = nodes;
         return this;
     }
 
-    public EvaluationCommandBuilder setMate(Integer mate) {
+    public EvaluationParameters setMate(Integer mate) {
         this.mate = mate;
         return this;
     }
 
-    public EvaluationCommandBuilder setMovetime(Integer movetime) {
+    public EvaluationParameters setMovetime(Integer movetime) {
         this.movetime = movetime;
         return this;
     }
