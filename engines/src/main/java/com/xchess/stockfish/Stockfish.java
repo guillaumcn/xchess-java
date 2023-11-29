@@ -35,7 +35,8 @@ public class Stockfish implements ChessEngine {
         this.process.writeCommand("uci");
         List<String> initLines = this.waitUntilReady();
         String initLine = initLines.stream().filter(line -> line.startsWith(
-                "Stockfish")).findFirst().orElseThrow(IOException::new);
+                "Stockfish")).findFirst().orElseThrow(() -> new IOException(
+                "Cannot find stockfish initialization line"));
         this.engineVersion = Float.parseFloat(initLine.split(" ")[1]);
 
         this.setOptions(options);
@@ -75,7 +76,7 @@ public class Stockfish implements ChessEngine {
         this.waitUntilReady();
 
         String fenLineOptional =
-                lines.stream().filter(line -> line.startsWith("Fen")).findFirst().orElseThrow(IOException::new);
+                lines.stream().filter(line -> line.startsWith("Fen")).findFirst().orElseThrow(() -> new IOException("Cannot find fen line in output"));
 
         return fenLineOptional.substring(5);
     }

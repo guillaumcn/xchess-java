@@ -1,0 +1,2 @@
+Stockfish 14.1 by the Stockfish developers (see AUTHORS file)
+readyok
