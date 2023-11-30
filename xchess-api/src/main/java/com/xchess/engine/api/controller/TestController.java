@@ -25,7 +25,7 @@ public class TestController {
         return this.poolWrapper.doAction(engineWorker -> {
             try {
                 engineWorker.moveToFenPosition("rnbqkbnr/pppppppp/8/8/6P1/8" +
-                        "/PPPPPP1P/RNBQKBNR b KQkq - 0 1");
+                        "/PPPPPP1P/RNBQKBNR b KQkq - 0 1", true);
                 return engineWorker.getPossibleMoves();
             } catch (IOException | TimeoutException e) {
                 throw new RuntimeException(e);

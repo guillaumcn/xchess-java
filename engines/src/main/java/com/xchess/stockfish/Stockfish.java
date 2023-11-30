@@ -26,7 +26,7 @@ public class Stockfish implements ChessEngine {
             TimeoutException {
         this.process = process;
         this.config = config;
-        this.options = new StockfishOptions();
+        this.options = StockfishOptions.getDefaultOptions();
 
         this.process.start();
         this.process.writeCommand("uci");

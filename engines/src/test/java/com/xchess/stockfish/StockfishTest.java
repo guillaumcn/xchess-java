@@ -68,18 +68,14 @@ public class StockfishTest {
     @Test
     public void shouldMergeWithCurrentOptions() throws IOException, TimeoutException {
         initStockfishInstance(true);
-        StockfishOptions currentOptions = new StockfishOptions()
-                .setHash(12)
-                .setThreads(25);
-        this.subject.setOptions(currentOptions);
+        StockfishOptions currentOptions = StockfishOptions.getDefaultOptions();
         StockfishOptions newOptions = new StockfishOptions()
-                .setPonder(false)
+                .setPonder(true)
                 .setThreads(45);
         this.subject.setOptions(newOptions);
         assertEquals(currentOptions.merge(newOptions), this.subject.getOptions());
-        verify(this.process, times(2)).writeCommand("setoption name Hash value 12");
-        verify(this.process, times(1)).writeCommand("setoption name Threads value 25");
-        verify(this.process, times(1)).writeCommand("setoption name Ponder value false");
+        verify(this.process, times(2)).writeCommand("setoption name Hash value 16");
+        verify(this.process, times(1)).writeCommand("setoption name Ponder value true");
         verify(this.process, times(1)).writeCommand("setoption name Threads value 45");
     }
 
