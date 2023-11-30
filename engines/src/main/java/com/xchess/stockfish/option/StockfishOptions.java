@@ -122,62 +122,63 @@ public class StockfishOptions {
 
     public List<String> getCommands() {
         List<String> commands = new ArrayList<>();
-        String COMMAND_TEMPLATE = "setoption name {{name}} value " +
-                "{{value}}";
+        String nameBinding = "{{name}}";
+        String valueBinding = "{{value}}";
+        String commandTemplate = "setoption name "+ nameBinding + " value " + valueBinding;
         if (!Objects.isNull(this.threads)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "Threads").
-                    replace("{{value}}", this.threads.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "Threads").
+                    replace(valueBinding, this.threads.toString()));
         }
         if (!Objects.isNull(this.hash)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "Hash").
-                    replace("{{value}}", this.hash.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "Hash").
+                    replace(valueBinding, this.hash.toString()));
         }
         if (!Objects.isNull(this.ponder)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "Ponder").
-                    replace("{{value}}", this.ponder.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "Ponder").
+                    replace(valueBinding, this.ponder.toString()));
         }
         if (!Objects.isNull(this.moveOverhead)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "Move Overhead").
-                    replace("{{value}}", this.moveOverhead.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "Move Overhead").
+                    replace(valueBinding, this.moveOverhead.toString()));
         }
         if (!Objects.isNull(this.multiPv)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "MultiPV").
-                    replace("{{value}}", this.multiPv.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "MultiPV").
+                    replace(valueBinding, this.multiPv.toString()));
         }
         if (!Objects.isNull(this.skillLevel)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "Skill Level").
-                    replace("{{value}}", this.skillLevel.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "Skill Level").
+                    replace(valueBinding, this.skillLevel.toString()));
         }
         if (!Objects.isNull(this.debugLogFile)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "Debug Log File").
-                    replace("{{value}}", this.debugLogFile));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "Debug Log File").
+                    replace(valueBinding, this.debugLogFile));
         }
         if (!Objects.isNull(this.slowMover)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "Slow Mover").
-                    replace("{{value}}", this.slowMover.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "Slow Mover").
+                    replace(valueBinding, this.slowMover.toString()));
         }
         if (!Objects.isNull(this.uciChess960)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "UCI_Chess960").
-                    replace("{{value}}", this.uciChess960.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "UCI_Chess960").
+                    replace(valueBinding, this.uciChess960.toString()));
         }
         if (!Objects.isNull(this.uciElo)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "UCI_Elo").
-                    replace("{{value}}", this.uciElo.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "UCI_Elo").
+                    replace(valueBinding, this.uciElo.toString()));
         }
         if (!Objects.isNull(this.uciLimitStrength)) {
-            commands.add(COMMAND_TEMPLATE.
-                    replace("{{name}}", "UCI_LimitStrength").
-                    replace("{{value}}", this.uciLimitStrength.toString()));
+            commands.add(commandTemplate.
+                    replace(nameBinding, "UCI_LimitStrength").
+                    replace(valueBinding, this.uciLimitStrength.toString()));
         }
         return commands;
     }

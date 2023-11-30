@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
-public class StdoutReader extends Thread {
+public class StdoutReaderThread extends Thread {
     private boolean keepRunning;
     private final List<String> resultLines;
     private final BufferedReader stdoutReader;
@@ -16,8 +16,8 @@ public class StdoutReader extends Thread {
     private IOException exceptionThrown;
     private final int timeoutInMs;
 
-    public StdoutReader(BufferedReader stdoutReader,
-                        Predicate<String> endPredicate, int timeoutInMs) {
+    public StdoutReaderThread(BufferedReader stdoutReader,
+                              Predicate<String> endPredicate, int timeoutInMs) {
         this.keepRunning = true;
         this.resultLines = new ArrayList<>();
         this.stdoutReader = stdoutReader;

@@ -16,9 +16,6 @@ public class EvaluationParameters {
     private Integer mate;
     private Integer movetime;
 
-    public EvaluationParameters() {
-    }
-
     public EvaluationParameters setSearchMoves(List<String> searchMoves) {
         this.searchMoves = searchMoves;
         return this;

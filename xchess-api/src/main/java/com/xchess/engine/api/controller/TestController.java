@@ -22,7 +22,7 @@ public class TestController {
 
     @GetMapping(value = "/possibleMovesFromStart")
     public List<String> getOne() throws Exception {
-        return this.poolWrapper.doAction((engineWorker) -> {
+        return this.poolWrapper.doAction(engineWorker -> {
             try {
                 engineWorker.moveToFenPosition("rnbqkbnr/pppppppp/8/8/6P1/8" +
                         "/PPPPPP1P/RNBQKBNR b KQkq - 0 1");

@@ -180,7 +180,7 @@ public class Stockfish implements ChessEngine {
         Collections.reverse(evaluationLines);
 
         String lastInfoLine =
-                evaluationLines.stream().filter((line) -> line.contains("info"
+                evaluationLines.stream().filter(line -> line.contains("info"
                 ) && line.contains("score")).findFirst().orElseThrow(IOException::new);
         lastInfoLine = lastInfoLine.substring(lastInfoLine.indexOf("score"));
         String[] splittedLastInfoLine = lastInfoLine.split(" ");

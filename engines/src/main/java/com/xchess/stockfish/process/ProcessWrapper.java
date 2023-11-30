@@ -72,9 +72,9 @@ public class ProcessWrapper {
                     "greater than 0");
         }
 
-        StdoutReader stdoutReader = new StdoutReader(this.stdoutReader,
+        StdoutReaderThread stdoutReaderThread = new StdoutReaderThread(this.stdoutReader,
                 matchPredicate, timeoutInMs);
-        return stdoutReader.getLines();
+        return stdoutReaderThread.getLines();
     }
 
     public void writeCommand(String command) throws IOException {
