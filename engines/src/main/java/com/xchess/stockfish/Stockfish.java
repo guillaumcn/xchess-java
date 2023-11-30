@@ -7,9 +7,9 @@ import com.xchess.evaluation.parameters.EvaluationParameters;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.stockfish.process.ProcessWrapper;
-import com.xchess.stockfish.validators.FenSyntaxValidator;
-import com.xchess.stockfish.validators.MoveValidator;
-import com.xchess.stockfish.validators.SquareValidator;
+import com.xchess.validators.FenSyntaxValidator;
+import com.xchess.validators.MoveValidator;
+import com.xchess.validators.SquareValidator;
 
 import java.io.IOException;
 import java.util.Collections;
