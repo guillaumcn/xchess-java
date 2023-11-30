@@ -292,6 +292,19 @@ public class StockfishTest {
         );
     }
 
+    @Test
+    public void shouldReturnTrueIfHealthcheckNoException() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        assertTrue(this.subject.healthCheck());
+    }
+
+    @Test
+    public void shouldReturnFalseIfHealthcheckWithException() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        this.subject.setWaitUntilReadyThrowException();
+        assertFalse(this.subject.healthCheck());
+    }
+
     private void initStockfishInstance(boolean validInitOutput) throws IOException, TimeoutException {
         String file = validInitOutput ? "stockfish/outputs/init.txt" :
                 "stockfish/outputs/invalidInit.txt";
@@ -313,7 +326,7 @@ public class StockfishTest {
         List<String> fileLines = getResourcesFileLines(file);
         when(this.process.readLinesUntil(any(Pattern.class),
                 anyInt())).thenReturn(fileLines);
-        when(this.process.readLinesUntil(any(String.class),
+        when(this.process.readLinesUntil(anyString(),
                 anyInt())).thenReturn(fileLines);
     }
 

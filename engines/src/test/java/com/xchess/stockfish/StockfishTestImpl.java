@@ -14,6 +14,7 @@ public class StockfishTestImpl extends Stockfish {
     private int fenCallCount;
     private List<List<String>> successivePossibleMoves;
     private int possibleMovesCallCount;
+    private boolean waitUntilReadyThrowException;
 
     public StockfishTestImpl(ProcessWrapper process, StockfishConfig config) throws IOException, TimeoutException {
         super(process, config);
@@ -27,6 +28,10 @@ public class StockfishTestImpl extends Stockfish {
 
     public void setSuccessivePossibleMoves(List<List<String>> successivePossibleMoves) {
         this.successivePossibleMoves = successivePossibleMoves;
+    }
+
+    public void setWaitUntilReadyThrowException() {
+        this.waitUntilReadyThrowException = true;
     }
 
     @Override
@@ -48,6 +53,15 @@ public class StockfishTestImpl extends Stockfish {
             List<String> result = this.successivePossibleMoves.get(possibleMovesCallCount);
             possibleMovesCallCount++;
             return result;
+        }
+    }
+
+    @Override
+    protected List<String> waitUntilReady() throws IOException, TimeoutException {
+        if (waitUntilReadyThrowException) {
+            throw new IOException();
+        } else {
+            return super.waitUntilReady();
         }
     }
 }

@@ -39,13 +39,6 @@ public class Stockfish implements ChessEngine {
         this.setOptions(options);
     }
 
-    public Stockfish(ProcessWrapper process, StockfishConfig config,
-                     StockfishOptions options) throws IOException,
-            TimeoutException {
-        this(process, config);
-        this.setOptions(options);
-    }
-
     public void stop() throws IOException {
         this.process.stop();
     }
@@ -199,7 +192,7 @@ public class Stockfish implements ChessEngine {
         return bestMoveLines;
     }
 
-    private List<String> waitUntilReady() throws IOException, TimeoutException {
+    protected List<String> waitUntilReady() throws IOException, TimeoutException {
         this.process.writeCommand("isready");
         return this.process.readLinesUntil("readyok",
                 this.config.getTimeoutInMs());
