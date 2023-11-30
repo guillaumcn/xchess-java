@@ -24,9 +24,9 @@ public interface ChessEngine {
 
     void move(List<String> moves) throws IOException, TimeoutException;
 
-    void moveToStartPosition() throws IOException, TimeoutException;
+    void moveToStartPosition(boolean newGame) throws IOException, TimeoutException;
 
-    void moveToFenPosition(String fen) throws IOException,
+    void moveToFenPosition(String fen, boolean newGame) throws IOException,
             TimeoutException;
 
     String findBestMove(StockfishEvaluationParameters options) throws IOException,

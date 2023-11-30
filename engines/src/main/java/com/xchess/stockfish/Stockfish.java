@@ -102,13 +102,19 @@ public class Stockfish implements ChessEngine {
         return getPossibleMoves().contains(move);
     }
 
-    public void moveToStartPosition() throws IOException, TimeoutException {
+    public void moveToStartPosition(boolean newGame) throws IOException, TimeoutException {
+        if (newGame) {
+            this.process.writeCommand("ucinewgame");
+        }
         this.process.writeCommand("position startpos");
         this.waitUntilReady();
     }
 
-    public void moveToFenPosition(String fen) throws IOException,
+    public void moveToFenPosition(String fen, boolean newGame) throws IOException,
             TimeoutException {
+        if (newGame) {
+            this.process.writeCommand("ucinewgame");
+        }
         this.process.writeCommand("position fen " + fen);
         this.waitUntilReady();
     }
@@ -127,12 +133,12 @@ public class Stockfish implements ChessEngine {
                     this.process.writeCommand("position fen " + this.getFenPosition() + " moves " + move);
                     this.waitUntilReady();
                 } else {
-                    this.moveToFenPosition(startingPosition);
+                    this.moveToFenPosition(startingPosition, false);
                     throw new IllegalArgumentException("Illegal move " + move +
                             " from position " + this.getFenPosition());
                 }
             } catch (TimeoutException e) {
-                this.moveToFenPosition(startingPosition);
+                this.moveToFenPosition(startingPosition, false);
                 throw e;
             }
 

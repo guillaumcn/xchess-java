@@ -166,7 +166,15 @@ public class StockfishTest {
     @Test
     public void shouldMoveToStartPosition() throws IOException, TimeoutException {
         initStockfishInstance(true);
-        this.subject.moveToStartPosition();
+        this.subject.moveToStartPosition(false);
+        verify(this.process, times(1)).writeCommand("position startpos");
+    }
+
+    @Test
+    public void shouldMoveToStartPositionWithNewGameCommand() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        this.subject.moveToStartPosition(true);
+        verify(this.process, times(1)).writeCommand("ucinewgame");
         verify(this.process, times(1)).writeCommand("position startpos");
     }
 
@@ -174,7 +182,16 @@ public class StockfishTest {
     public void shouldMoveToFenPosition() throws IOException, TimeoutException {
         initStockfishInstance(true);
         String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        this.subject.moveToFenPosition(fen);
+        this.subject.moveToFenPosition(fen, false);
+        verify(this.process, times(1)).writeCommand("position fen " + fen);
+    }
+
+    @Test
+    public void shouldMoveToFenPositionWithNewGameCommand() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        this.subject.moveToFenPosition(fen, true);
+        verify(this.process, times(1)).writeCommand("ucinewgame");
         verify(this.process, times(1)).writeCommand("position fen " + fen);
     }
 
