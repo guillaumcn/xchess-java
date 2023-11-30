@@ -1,6 +1,7 @@
 package com.xchess.stockfish;
 
 import com.xchess.stockfish.config.StockfishConfig;
+import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.stockfish.process.ProcessWrapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,37 @@ public class StockfishTest {
     }
 
     @Test
+    public void shouldWriteOptionsCommandToProcessInput() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        StockfishOptions options = new StockfishOptions()
+                .setHash(12)
+                .setThreads(25)
+                .setDebugLogFile("debugFile.txt");
+        this.subject.setOptions(options);
+        for (String command:
+                options.getCommands()) {
+            verify(this.process, times(1)).writeCommand(command);
+        }
+    }
+
+    @Test
+    public void shouldMergeWithCurrentOptions() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        StockfishOptions currentOptions = new StockfishOptions()
+                .setHash(12)
+                .setThreads(25);
+        this.subject.setOptions(currentOptions);
+        StockfishOptions newOptions = new StockfishOptions()
+                .setPonder(false)
+                .setThreads(45);
+        this.subject.setOptions(newOptions);
+        verify(this.process, times(2)).writeCommand("setoption name Hash value 12");
+        verify(this.process, times(1)).writeCommand("setoption name Threads value 25");
+        verify(this.process, times(1)).writeCommand("setoption name Ponder value false");
+        verify(this.process, times(1)).writeCommand("setoption name Threads value 45");
+    }
+
+    @Test
     public void shouldGetFenPosition() throws IOException, TimeoutException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/fenPosition.txt",
@@ -75,6 +107,58 @@ public class StockfishTest {
         assertTrue(result.contains("a2a4"));
         assertTrue(result.contains("g1h3"));
         assertEquals(20, result.size());
+    }
+
+    @Test
+    public void shouldGetPossibleMovesForSpecificSquare() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
+                "go perft 1");
+        List<String> result = this.subject.getPossibleMoves("a2");
+        assertTrue(result.contains("a2a3"));
+        assertTrue(result.contains("a2a4"));
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void shouldReturnNoPossibleMovesForSpecificSquare() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
+                "go perft 1");
+        List<String> result = this.subject.getPossibleMoves("a3");
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldThrowExceptionIfASquareHasInvalidSyntax() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
+                "go perft 1");
+        assertThrows(IllegalArgumentException.class, () -> this.subject.getPossibleMoves("a9"));
+    }
+
+    @Test
+    public void shouldReturnTrueIfAMoveIsPossible() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
+                "go perft 1");
+        assertTrue(this.subject.isMovePossible("a2a4"));
+    }
+
+    @Test
+    public void shouldReturnFalseIfAMoveIsNotPossible() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
+                "go perft 1");
+        assertFalse(this.subject.isMovePossible("a3a4"));
+    }
+
+    @Test
+    public void shouldThrowExceptionIfAMoveHasInvalidSyntax() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
+                "go perft 1");
+        assertThrows(IllegalArgumentException.class, () -> this.subject.isMovePossible("a9a8"));
     }
 
     private void initStockfishInstance(boolean validInitOutput) throws IOException, TimeoutException {
