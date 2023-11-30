@@ -197,4 +197,17 @@ public class StockfishOptions {
                 .setUciElo(1320)
                 .setUciLimitStrength(false);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StockfishOptions that = (StockfishOptions) o;
+        return Objects.equals(threads, that.threads) && Objects.equals(hash, that.hash) && Objects.equals(ponder, that.ponder) && Objects.equals(moveOverhead, that.moveOverhead) && Objects.equals(multiPv, that.multiPv) && Objects.equals(skillLevel, that.skillLevel) && Objects.equals(debugLogFile, that.debugLogFile) && Objects.equals(slowMover, that.slowMover) && Objects.equals(uciChess960, that.uciChess960) && Objects.equals(uciElo, that.uciElo) && Objects.equals(uciLimitStrength, that.uciLimitStrength);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(threads, hash, ponder, moveOverhead, multiPv, skillLevel, debugLogFile, slowMover, uciChess960, uciElo, uciLimitStrength);
+    }
 }

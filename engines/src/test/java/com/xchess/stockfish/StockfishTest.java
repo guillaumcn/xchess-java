@@ -76,6 +76,7 @@ public class StockfishTest {
                 .setPonder(false)
                 .setThreads(45);
         this.subject.setOptions(newOptions);
+        assertEquals(currentOptions.merge(newOptions), this.subject.getOptions());
         verify(this.process, times(2)).writeCommand("setoption name Hash value 12");
         verify(this.process, times(1)).writeCommand("setoption name Threads value 25");
         verify(this.process, times(1)).writeCommand("setoption name Ponder value false");

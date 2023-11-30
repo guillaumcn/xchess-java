@@ -43,6 +43,10 @@ public class Stockfish implements ChessEngine {
         this.process.stop();
     }
 
+    public StockfishOptions getOptions() {
+        return this.options;
+    }
+
     public void setOptions(StockfishOptions options) throws IOException,
             TimeoutException {
         this.options = this.options.merge(options);
