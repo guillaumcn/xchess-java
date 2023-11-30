@@ -11,9 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
@@ -23,7 +21,7 @@ import static org.mockito.Mockito.*;
 public class StockfishTest {
     private ProcessWrapper process;
     private StockfishConfig config;
-    private Stockfish subject;
+    private StockfishTestImpl subject;
 
     @Before
     public void setUp() {
@@ -161,11 +159,74 @@ public class StockfishTest {
         assertThrows(IllegalArgumentException.class, () -> this.subject.isMovePossible("a9a8"));
     }
 
+    @Test
+    public void shouldMove() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        this.subject.setSuccessiveFens(Arrays.asList(
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                "rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1",
+                "rnbqkbnr/1ppppppp/8/p7/P7/8/1PPPPPPP/RNBQKBNR w KQkq - 0 2"
+        ));
+        this.subject.setSuccessivePossibleMoves(Arrays.asList(
+                Collections.singletonList("a2a4"),
+                Collections.singletonList("a7a5"),
+                Collections.singletonList("b2b4")
+        ));
+        this.subject.move(Arrays.asList("a2a4", "a7a5", "b2b4"));
+
+        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 moves a2a4");
+        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1 moves a7a5");
+        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/1ppppppp/8/p7/P7/8/1PPPPPPP/RNBQKBNR w KQkq - 0 2 moves b2b4");
+    }
+
+    @Test
+    public void shouldGoBackToInitialPositionIfOneMoveIsNotValidDuringProcess() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        this.subject.setSuccessiveFens(Arrays.asList(
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                "rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1",
+                "rnbqkbnr/1ppppppp/8/p7/P7/8/1PPPPPPP/RNBQKBNR w KQkq - 0 2"
+        ));
+        this.subject.setSuccessivePossibleMoves(Arrays.asList(
+                Collections.singletonList("a2a4"),
+                Collections.singletonList("a7a5"),
+                Collections.emptyList()
+        ));
+        assertThrows(IllegalArgumentException.class, () -> this.subject.move(Arrays.asList("a2a4", "a7a5", "b2b4")));
+
+        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 moves a2a4");
+        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1 moves a7a5");
+        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    }
+
+    @Test
+    public void shouldGoBackToInitialPositionIfTimeoutDuringProcess() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        this.subject.setSuccessiveFens(Collections.singletonList(
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        ));
+        this.subject.setSuccessivePossibleMoves(Collections.singletonList(
+                Collections.singletonList("a2a4")
+        ));
+        when(this.process.readLinesUntil(any(Pattern.class), anyInt())).thenThrow(TimeoutException.class);
+        assertThrows(TimeoutException.class, () -> this.subject.move(Collections.singletonList("a2a4")));
+
+        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    }
+
+    @Test
+    public void shouldThrowExceptionIfOneOnTheMovesHasInvalidSyntax() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        assertThrows(IllegalArgumentException.class, () -> this.subject.move(Arrays.asList("a2a4", "a8a9")));
+    }
+
     private void initStockfishInstance(boolean validInitOutput) throws IOException, TimeoutException {
         String file = validInitOutput ? "stockfish/outputs/init.txt" :
                 "stockfish/outputs/invalidInit.txt";
         this.bindFileToLineReaderWhenWriting(file, "isready");
-        this.subject = new Stockfish(process, config);
+        this.subject = new StockfishTestImpl(process, config);
         verify(this.process, times(1)).writeCommand("uci");
     }
 

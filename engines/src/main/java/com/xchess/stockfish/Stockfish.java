@@ -7,14 +7,12 @@ import com.xchess.evaluation.parameters.EvaluationParameters;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.process.ProcessWrapper;
-import com.xchess.validators.FenSyntaxValidator;
 import com.xchess.validators.MoveValidator;
 import com.xchess.validators.SquareValidator;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
@@ -107,32 +105,25 @@ public class Stockfish implements ChessEngine {
         return getPossibleMoves().contains(move);
     }
 
-    public boolean isValidFenPosition(String fen) throws IOException, TimeoutException {
-        if (!FenSyntaxValidator.isFenSyntaxValid(fen)) {
-            return false;
-        }
+    public String moveToStartPosition() throws IOException, TimeoutException {
+        this.process.writeCommand("position startpos");
+        this.waitUntilReady();
+        return this.getFenPosition();
+    }
 
-        boolean isValid;
-        String currentFen = this.getFenPosition();
-        try {
-            this.moveToFenPosition(fen);
-            String bestMove = this.findBestMove(new EvaluationParameters().setDepth(10));
-            isValid = !Objects.isNull(bestMove);
-        } catch (IOException | TimeoutException e) {
-            isValid = false;
-        } finally {
-            this.moveToFenPosition(currentFen);
-        }
-        return isValid;
+    public void moveToFenPosition(String fen) throws IOException,
+            TimeoutException {
+        this.process.writeCommand("position fen " + fen);
+        this.waitUntilReady();
     }
 
     public void move(List<String> moves) throws IOException, TimeoutException {
-        String startingPosition = this.getFenPosition();
         int invalidMoveIndex =
                 moves.stream().map(MoveValidator::isMoveValid).toList().indexOf(false);
         if (invalidMoveIndex != -1) {
             throw new IllegalArgumentException("Invalid syntax for move " + moves.get(invalidMoveIndex));
         }
+        String startingPosition = this.getFenPosition();
         for (String move :
                 moves) {
             try {
@@ -150,18 +141,6 @@ public class Stockfish implements ChessEngine {
             }
 
         }
-    }
-
-    public String moveToStartPosition() throws IOException, TimeoutException {
-        this.process.writeCommand("position startpos");
-        this.waitUntilReady();
-        return this.getFenPosition();
-    }
-
-    public void moveToFenPosition(String fen) throws IOException,
-            TimeoutException {
-        this.process.writeCommand("position fen " + fen);
-        this.waitUntilReady();
     }
 
     public String findBestMove(EvaluationParameters options) throws IOException, TimeoutException {

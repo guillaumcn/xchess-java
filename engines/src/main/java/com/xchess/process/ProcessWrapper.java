@@ -12,11 +12,9 @@ public class ProcessWrapper {
     private Process process;
     private BufferedWriter writer;
     private BufferedReader stdoutReader;
-    private final String[] command;
 
     public ProcessWrapper(String... command) {
         this.processBuilder = new ProcessBuilder(command);
-        this.command = command;
     }
 
     public void setProcess(Process process) {
@@ -29,10 +27,6 @@ public class ProcessWrapper {
 
     public void setStdoutReader(BufferedReader stdoutReader) {
         this.stdoutReader = stdoutReader;
-    }
-
-    public String[] getCommand() {
-        return command;
     }
 
     public void start() throws IOException {
