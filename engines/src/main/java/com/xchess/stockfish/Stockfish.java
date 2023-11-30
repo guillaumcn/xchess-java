@@ -94,7 +94,7 @@ public class Stockfish implements ChessEngine {
 
     public List<String> getPossibleMoves(String square) throws IOException,
             TimeoutException {
-        if (SquareValidator.isSquareSyntaxValid(square)) {
+        if (!SquareValidator.isSquareSyntaxValid(square)) {
             throw new IllegalArgumentException("Invalid syntax for square " + square);
         }
         return this.getPossibleMoves().stream().filter(move -> move.startsWith(square)).toList();
@@ -102,7 +102,7 @@ public class Stockfish implements ChessEngine {
 
     public boolean isMovePossible(String move) throws IOException,
             TimeoutException {
-        if (MoveValidator.isMoveValid(move)) {
+        if (!MoveValidator.isMoveValid(move)) {
             throw new IllegalArgumentException("Invalid syntax for move " + move);
         }
         return getPossibleMoves().contains(move);
@@ -212,6 +212,15 @@ public class Stockfish implements ChessEngine {
                 Integer.parseInt(value) * multiplier);
     }
 
+    public boolean healthCheck() {
+        try {
+            this.waitUntilReady();
+        } catch (IOException | TimeoutException e) {
+            return false;
+        }
+        return true;
+    }
+
     private String getBestMoveFromOutput() throws IOException,
             TimeoutException {
         List<String> evaluationLines = getEvaluationLines();
@@ -230,15 +239,6 @@ public class Stockfish implements ChessEngine {
                         this.config.getTimeoutInMs());
         this.waitUntilReady();
         return bestMoveLines;
-    }
-
-    public boolean healthCheck() {
-        try {
-            this.waitUntilReady();
-        } catch (IOException | TimeoutException e) {
-            return false;
-        }
-        return true;
     }
 
     private List<String> waitUntilReady() throws IOException, TimeoutException {
