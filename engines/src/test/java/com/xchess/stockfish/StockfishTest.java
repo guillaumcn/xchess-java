@@ -160,6 +160,21 @@ public class StockfishTest {
     }
 
     @Test
+    public void shouldMoveToStartPosition() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        this.subject.moveToStartPosition();
+        verify(this.process, times(1)).writeCommand("position startpos");
+    }
+
+    @Test
+    public void shouldMoveToFenPosition() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        this.subject.moveToFenPosition(fen);
+        verify(this.process, times(1)).writeCommand("position fen " + fen);
+    }
+
+    @Test
     public void shouldMove() throws IOException, TimeoutException {
         initStockfishInstance(true);
         this.subject.setSuccessiveFens(Arrays.asList(

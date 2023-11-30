@@ -24,7 +24,7 @@ public interface ChessEngine {
 
     void move(List<String> moves) throws IOException, TimeoutException;
 
-    String moveToStartPosition() throws IOException, TimeoutException;
+    void moveToStartPosition() throws IOException, TimeoutException;
 
     void moveToFenPosition(String fen) throws IOException,
             TimeoutException;

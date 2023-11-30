@@ -105,10 +105,9 @@ public class Stockfish implements ChessEngine {
         return getPossibleMoves().contains(move);
     }
 
-    public String moveToStartPosition() throws IOException, TimeoutException {
+    public void moveToStartPosition() throws IOException, TimeoutException {
         this.process.writeCommand("position startpos");
         this.waitUntilReady();
-        return this.getFenPosition();
     }
 
     public void moveToFenPosition(String fen) throws IOException,
