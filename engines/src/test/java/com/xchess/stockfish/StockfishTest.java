@@ -1,5 +1,7 @@
 package com.xchess.stockfish;
 
+import com.xchess.evaluation.ChessEngineEvaluation;
+import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.evaluation.parameters.EvaluationParameters;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
@@ -244,6 +246,50 @@ public class StockfishTest {
         bindFileToLineReaderWhenWriting("stockfish/outputs/goDepth10InitialPosition.txt",
                 "go depth 10");
         assertEquals("e2e4", this.subject.findBestMove(new EvaluationParameters().setDepth(10)));
+    }
+
+    @Test
+    public void shouldGetBestMoveReturnsNullIfEndGame() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/goDepth10EndGame.txt",
+                "go depth 10");
+        assertNull(this.subject.findBestMove(new EvaluationParameters().setDepth(10)));
+    }
+
+    @Test
+    public void shouldGetCentipawnsEvaluation() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/centipawnEvaluation.txt",
+                "go depth 10");
+        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+        assertEquals(
+                new ChessEngineEvaluation(ChessEngineEvaluationType.CENTIPAWNS, 105),
+                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
+        );
+    }
+
+    @Test
+    public void shouldGetMateEvaluation() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/mateEvaluation.txt",
+                "go depth 10");
+        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr/1ppppppp/8/8/2B1P3/p4Q2/PPPP1PPP/RNB1K1NR w KQkq - 0 4"));
+        assertEquals(
+                new ChessEngineEvaluation(ChessEngineEvaluationType.MATE, 1),
+                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
+        );
+    }
+
+    @Test
+    public void shouldGetEvaluationForBlack() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/mateEvaluation.txt",
+                "go depth 10");
+        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr/1ppppppp/8/8/2B1P3/p4Q2/PPPP1PPP/RNB1K1NR b KQkq - 0 4"));
+        assertEquals(
+                new ChessEngineEvaluation(ChessEngineEvaluationType.MATE, -1),
+                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
+        );
     }
 
     private void initStockfishInstance(boolean validInitOutput) throws IOException, TimeoutException {

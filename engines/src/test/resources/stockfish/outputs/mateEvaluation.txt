@@ -1,0 +1,12 @@
+go depth 10
+info depth 1 seldepth 2 multipv 1 score mate 1 nodes 42 nps 7000 tbhits 0 time 6 pv c4f7
+info depth 2 seldepth 2 multipv 1 score mate 1 nodes 84 nps 14000 tbhits 0 time 6 pv c4f7
+info depth 3 seldepth 2 multipv 1 score mate 1 nodes 126 nps 18000 tbhits 0 time 7 pv c4f7
+info depth 4 seldepth 2 multipv 1 score mate 1 nodes 168 nps 24000 tbhits 0 time 7 pv c4f7
+info depth 5 seldepth 2 multipv 1 score mate 1 nodes 210 nps 30000 tbhits 0 time 7 pv c4f7
+info depth 6 seldepth 2 multipv 1 score mate 1 nodes 252 nps 36000 tbhits 0 time 7 pv c4f7
+info depth 7 seldepth 2 multipv 1 score mate 1 nodes 294 nps 42000 tbhits 0 time 7 pv c4f7
+info depth 8 seldepth 2 multipv 1 score mate 1 nodes 336 nps 48000 tbhits 0 time 7 pv c4f7
+info depth 9 seldepth 2 multipv 1 score mate 1 nodes 378 nps 54000 tbhits 0 time 7 pv c4f7
+info depth 10 seldepth 2 multipv 1 score mate 1 nodes 420 nps 60000 tbhits 0 time 7 pv c4f7
+bestmove c4f7
