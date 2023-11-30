@@ -1,5 +1,6 @@
 package com.xchess.stockfish.process;
 
+import com.xchess.process.ProcessWrapper;
 import org.junit.Before;
 import org.junit.Test;
 

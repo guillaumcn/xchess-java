@@ -1,4 +1,4 @@
-package com.xchess.stockfish.process;
+package com.xchess.process;
 
 import java.io.*;
 import java.util.List;

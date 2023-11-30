@@ -2,7 +2,7 @@ package com.xchess.stockfish;
 
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
-import com.xchess.stockfish.process.ProcessWrapper;
+import com.xchess.process.ProcessWrapper;
 import org.junit.Before;
 import org.junit.Test;
 

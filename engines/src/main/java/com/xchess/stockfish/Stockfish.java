@@ -6,7 +6,7 @@ import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.evaluation.parameters.EvaluationParameters;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
-import com.xchess.stockfish.process.ProcessWrapper;
+import com.xchess.process.ProcessWrapper;
 import com.xchess.validators.FenSyntaxValidator;
 import com.xchess.validators.MoveValidator;
 import com.xchess.validators.SquareValidator;
