@@ -22,7 +22,7 @@ public interface ChessEngine {
     boolean isMovePossible(String move) throws IOException,
             TimeoutException;
 
-    boolean isValidFenPosition(String fen);
+    boolean isValidFenPosition(String fen) throws IOException, TimeoutException;
 
     void move(List<String> moves) throws IOException, TimeoutException;
 

@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 public class Stockfish implements ChessEngine {
@@ -108,42 +107,23 @@ public class Stockfish implements ChessEngine {
         return getPossibleMoves().contains(move);
     }
 
-    public boolean isValidFenPosition(String fen) {
+    public boolean isValidFenPosition(String fen) throws IOException, TimeoutException {
         if (!FenSyntaxValidator.isFenSyntaxValid(fen)) {
             return false;
         }
-        AtomicBoolean isValid = new AtomicBoolean(false);
 
-        Thread t = new Thread(() -> {
-            Stockfish tempStockfish = null;
-            try {
-                tempStockfish =
-                        new Stockfish(new ProcessWrapper(this.process.getCommand()),
-                                this.config);
-                tempStockfish.moveToFenPosition(fen);
-                String bestMove =
-                        tempStockfish.findBestMove(new EvaluationParameters().setDepth(10));
-                isValid.set(!Objects.isNull(bestMove));
-            } catch (IOException | TimeoutException e) {
-                isValid.set(false);
-            }
-
-            try {
-                if (!Objects.isNull(tempStockfish)) {
-                    tempStockfish.stop();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
+        boolean isValid;
+        String currentFen = this.getFenPosition();
         try {
-            t.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            this.moveToFenPosition(fen);
+            String bestMove = this.findBestMove(new EvaluationParameters().setDepth(10));
+            isValid = !Objects.isNull(bestMove);
+        } catch (IOException | TimeoutException e) {
+            isValid = false;
+        } finally {
+            this.moveToFenPosition(currentFen);
         }
-
-        return isValid.get();
+        return isValid;
     }
 
     public void move(List<String> moves) throws IOException, TimeoutException {
