@@ -1,5 +1,6 @@
 package com.xchess.stockfish;
 
+import com.xchess.evaluation.parameters.EvaluationParameters;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.process.ProcessWrapper;
@@ -235,6 +236,14 @@ public class StockfishTest {
     public void shouldThrowExceptionIfOneOnTheMovesHasInvalidSyntax() throws IOException, TimeoutException {
         initStockfishInstance(true);
         assertThrows(IllegalArgumentException.class, () -> this.subject.move(Arrays.asList("a2a4", "a8a9")));
+    }
+
+    @Test
+    public void shouldGetBestMove() throws IOException, TimeoutException {
+        initStockfishInstance(true);
+        bindFileToLineReaderWhenWriting("stockfish/outputs/goDepth10InitialPosition.txt",
+                "go depth 10");
+        assertEquals("e2e4", this.subject.findBestMove(new EvaluationParameters().setDepth(10)));
     }
 
     private void initStockfishInstance(boolean validInitOutput) throws IOException, TimeoutException {
