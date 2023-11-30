@@ -1,10 +1,10 @@
-package com.xchess.evaluation.parameters;
+package com.xchess.stockfish.evaluation.parameter;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class EvaluationParameters {
+public class StockfishEvaluationParameters {
     private List<String> searchMoves;
     private Integer wtime;
     private Integer btime;
@@ -16,52 +16,52 @@ public class EvaluationParameters {
     private Integer mate;
     private Integer movetime;
 
-    public EvaluationParameters setSearchMoves(List<String> searchMoves) {
+    public StockfishEvaluationParameters setSearchMoves(List<String> searchMoves) {
         this.searchMoves = searchMoves;
         return this;
     }
 
-    public EvaluationParameters setWtime(Integer wtime) {
+    public StockfishEvaluationParameters setWtime(Integer wtime) {
         this.wtime = wtime;
         return this;
     }
 
-    public EvaluationParameters setBtime(Integer btime) {
+    public StockfishEvaluationParameters setBtime(Integer btime) {
         this.btime = btime;
         return this;
     }
 
-    public EvaluationParameters setWinc(Integer winc) {
+    public StockfishEvaluationParameters setWinc(Integer winc) {
         this.winc = winc;
         return this;
     }
 
-    public EvaluationParameters setBinc(Integer binc) {
+    public StockfishEvaluationParameters setBinc(Integer binc) {
         this.binc = binc;
         return this;
     }
 
-    public EvaluationParameters setMovestogo(Integer movestogo) {
+    public StockfishEvaluationParameters setMovestogo(Integer movestogo) {
         this.movestogo = movestogo;
         return this;
     }
 
-    public EvaluationParameters setDepth(Integer depth) {
+    public StockfishEvaluationParameters setDepth(Integer depth) {
         this.depth = depth;
         return this;
     }
 
-    public EvaluationParameters setNodes(Integer nodes) {
+    public StockfishEvaluationParameters setNodes(Integer nodes) {
         this.nodes = nodes;
         return this;
     }
 
-    public EvaluationParameters setMate(Integer mate) {
+    public StockfishEvaluationParameters setMate(Integer mate) {
         this.mate = mate;
         return this;
     }
 
-    public EvaluationParameters setMovetime(Integer movetime) {
+    public StockfishEvaluationParameters setMovetime(Integer movetime) {
         this.movetime = movetime;
         return this;
     }

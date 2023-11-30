@@ -3,7 +3,7 @@ package com.xchess.stockfish;
 import com.xchess.ChessEngine;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
-import com.xchess.evaluation.parameters.EvaluationParameters;
+import com.xchess.stockfish.evaluation.parameter.StockfishEvaluationParameters;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.process.ProcessWrapper;
@@ -135,13 +135,13 @@ public class Stockfish implements ChessEngine {
         }
     }
 
-    public String findBestMove(EvaluationParameters options) throws IOException, TimeoutException {
+    public String findBestMove(StockfishEvaluationParameters options) throws IOException, TimeoutException {
         this.process.writeCommand(options.build());
 
         return this.getBestMoveFromOutput();
     }
 
-    public ChessEngineEvaluation getPositionEvaluation(EvaluationParameters options) throws IOException,
+    public ChessEngineEvaluation getPositionEvaluation(StockfishEvaluationParameters options) throws IOException,
             TimeoutException {
         String currentFen = this.getFenPosition();
         int multiplier = currentFen.contains("w") ? 1 : -1;

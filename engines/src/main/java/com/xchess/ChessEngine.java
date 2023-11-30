@@ -1,7 +1,7 @@
 package com.xchess;
 
 import com.xchess.evaluation.ChessEngineEvaluation;
-import com.xchess.evaluation.parameters.EvaluationParameters;
+import com.xchess.stockfish.evaluation.parameter.StockfishEvaluationParameters;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,10 +29,10 @@ public interface ChessEngine {
     void moveToFenPosition(String fen) throws IOException,
             TimeoutException;
 
-    String findBestMove(EvaluationParameters options) throws IOException,
+    String findBestMove(StockfishEvaluationParameters options) throws IOException,
             TimeoutException;
 
-    ChessEngineEvaluation getPositionEvaluation(EvaluationParameters options) throws IOException, TimeoutException;
+    ChessEngineEvaluation getPositionEvaluation(StockfishEvaluationParameters options) throws IOException, TimeoutException;
 
     boolean healthCheck();
 }
