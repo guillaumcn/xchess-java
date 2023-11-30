@@ -22,7 +22,22 @@ public class MoveValidatorTest {
     }
 
     @Test
-    public void testShouldReturnFalseIfAbnormalMove() {
-        assertFalse(MoveValidator.isMoveValid("i8q3"));
+    public void testShouldReturnFalseIfInvalidMoveWithNormalPromotion() {
+        assertFalse(MoveValidator.isMoveValid("i8e8r"));
+    }
+
+    @Test
+    public void testShouldReturnFalseIfInvalidSourceSquare() {
+        assertFalse(MoveValidator.isMoveValid("i8a4"));
+    }
+
+    @Test
+    public void testShouldReturnFalseIfInvalidDestinationSquare() {
+        assertFalse(MoveValidator.isMoveValid("a2i8"));
+    }
+
+    @Test
+    public void testShouldReturnFalseIfInvalidMoveSize() {
+        assertFalse(MoveValidator.isMoveValid("a2i"));
     }
 }
