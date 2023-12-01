@@ -67,7 +67,8 @@
         <snapshotRepository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/octocat/hello-world</url>
+            <url>https://maven.pkg.github.com/guillaumcn/java-chess-modules
+            </url>
         </snapshotRepository>
     </distributionManagement>
 </project>
