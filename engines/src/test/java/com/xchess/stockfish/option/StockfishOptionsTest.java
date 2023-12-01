@@ -17,7 +17,6 @@ public class StockfishOptionsTest {
                         "setoption name Hash value 16",
                         "setoption name Ponder value false",
                         "setoption name Move Overhead value 10",
-                        "setoption name MultiPV value 1",
                         "setoption name Skill Level value 20",
                         "setoption name Debug Log File value ",
                         "setoption name Slow Mover value 100",
