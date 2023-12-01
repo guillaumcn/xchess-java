@@ -14,6 +14,7 @@
     <packaging>jar</packaging>
     <properties>
         <java.version>17</java.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
         <spring.version>3.1.4</spring.version>
     </properties>
     <dependencies>
