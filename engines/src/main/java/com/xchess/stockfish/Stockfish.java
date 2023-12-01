@@ -118,18 +118,20 @@ public class Stockfish implements ChessEngine {
 
     public List<String> getPossibleMoves(String square) throws IOException,
             TimeoutException {
-        if (!SquareValidator.isSquareSyntaxValid(square)) {
+        String lowerCaseSquare = square.toLowerCase();
+        if (!SquareValidator.isSquareSyntaxValid(lowerCaseSquare)) {
             throw new IllegalArgumentException("Invalid syntax for square " + square);
         }
-        return this.getPossibleMoves().stream().filter(move -> move.startsWith(square)).toList();
+        return this.getPossibleMoves().stream().filter(move -> move.startsWith(lowerCaseSquare)).toList();
     }
 
     public boolean isMovePossible(String move) throws IOException,
             TimeoutException {
-        if (!MoveValidator.isMoveValid(move)) {
+        String lowerCaseMove = move.toLowerCase();
+        if (!MoveValidator.isMoveValid(lowerCaseMove)) {
             throw new IllegalArgumentException("Invalid syntax for move " + move);
         }
-        return getPossibleMoves().contains(move);
+        return getPossibleMoves().contains(lowerCaseMove);
     }
 
     public void moveToStartPosition(boolean newGame) throws IOException,
@@ -151,14 +153,16 @@ public class Stockfish implements ChessEngine {
     }
 
     public void move(List<String> moves) throws IOException, TimeoutException {
+        List<String> lowerCasesMoves =
+                moves.stream().map(String::toLowerCase).toList();
         int invalidMoveIndex =
-                moves.stream().map(MoveValidator::isMoveValid).toList().indexOf(false);
+                lowerCasesMoves.stream().map(MoveValidator::isMoveValid).toList().indexOf(false);
         if (invalidMoveIndex != -1) {
             throw new IllegalArgumentException("Invalid syntax for move " + moves.get(invalidMoveIndex));
         }
         String startingPosition = this.getFenPosition();
         for (String move :
-                moves) {
+                lowerCasesMoves) {
             try {
                 if (this.isMovePossible(move)) {
                     this.process.writeCommand("position fen " + this.getFenPosition() + " moves " + move);
