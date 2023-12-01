@@ -7,7 +7,10 @@
     <groupId>com.xchess</groupId>
     <artifactId>java-modules</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>java-modules</name>
+    <name>Java modules for chess</name>
+    <description>Provides java modules for chess including Stockfish engine
+        implementation
+    </description>
     <packaging>pom</packaging>
 
     <modules>
@@ -48,4 +51,12 @@
             </build>
         </profile>
     </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/guillaumcn/xchess-java</url>
+        </repository>
+    </distributionManagement>
 </project>
