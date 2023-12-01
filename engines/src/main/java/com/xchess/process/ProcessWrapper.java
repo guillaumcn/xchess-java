@@ -66,8 +66,9 @@ public class ProcessWrapper {
                     "greater than 0");
         }
 
-        StdoutReaderThread stdoutReaderThread = new StdoutReaderThread(this.stdoutReader,
-                matchPredicate, timeoutInMs);
+        StdoutReaderThread stdoutReaderThread =
+                new StdoutReaderThread(this.stdoutReader,
+                        matchPredicate, timeoutInMs);
         return stdoutReaderThread.getLines();
     }
 

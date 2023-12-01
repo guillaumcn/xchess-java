@@ -4,10 +4,17 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Validator for fen syntax
+ */
 public class FenSyntaxValidator {
     private FenSyntaxValidator() {
     }
 
+    /**
+     * @param fen The fen string to test
+     * @return true if the fen syntax is valid
+     */
     public static boolean isFenSyntaxValid(String fen) {
         Pattern regexPattern = Pattern.compile("^\\s*(((?:[rnbqkpRNBQKP1-8" +
                 "]+/){7})[rnbqkpRNBQKP1-8]+)\\s([b|w])\\s(-|[KQkq]{1,4})" +

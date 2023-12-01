@@ -3,10 +3,10 @@ package com.xchess.stockfish;
 import com.xchess.ChessEngine;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
-import com.xchess.stockfish.evaluation.parameter.StockfishEvaluationParameters;
-import com.xchess.stockfish.config.StockfishConfig;
-import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.process.ProcessWrapper;
+import com.xchess.stockfish.config.StockfishConfig;
+import com.xchess.stockfish.evaluation.parameter.StockfishEvaluationParameters;
+import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.validators.MoveValidator;
 import com.xchess.validators.SquareValidator;
 
@@ -16,12 +16,27 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
+/**
+ * Java implementation for Stockfish engine
+ */
 public class Stockfish implements ChessEngine {
     private final ProcessWrapper process;
     private final StockfishConfig config;
     private StockfishOptions options;
     private final Float engineVersion;
 
+    /**
+     * Creates an instance of Stockfish implementation. When creating an
+     * instance the default Stockfish engine options will be set.
+     * See {@link StockfishOptions#getDefaultOptions()}
+     *
+     * @param process The process wrapper instance created with stockfish
+     *                startup command
+     * @param config  The Stockfish configuration object
+     * @throws IOException      If any error occurs communicating with
+     *                          Stockfish engine process
+     * @throws TimeoutException in case of timeout reached when reading
+     */
     public Stockfish(ProcessWrapper process, StockfishConfig config) throws IOException,
             TimeoutException {
         this.process = process;
@@ -43,10 +58,25 @@ public class Stockfish implements ChessEngine {
         this.process.stop();
     }
 
+    /**
+     * Get current Stockfish engine options
+     *
+     * @return the current options
+     */
     public StockfishOptions getOptions() {
         return this.options;
     }
 
+    /**
+     * Set current Stockfish engine options. New options will be merged with
+     * current. See {@link StockfishOptions#merge(StockfishOptions)}
+     *
+     * @param options The options to set
+     * @throws IOException      If any error occurs communicating with
+     *                          Stockfish engine
+     *                          process
+     * @throws TimeoutException in case of timeout reached when reading
+     */
     public void setOptions(StockfishOptions options) throws IOException,
             TimeoutException {
         this.options = this.options.merge(options);
@@ -102,7 +132,8 @@ public class Stockfish implements ChessEngine {
         return getPossibleMoves().contains(move);
     }
 
-    public void moveToStartPosition(boolean newGame) throws IOException, TimeoutException {
+    public void moveToStartPosition(boolean newGame) throws IOException,
+            TimeoutException {
         if (newGame) {
             this.process.writeCommand("ucinewgame");
         }
@@ -202,7 +233,8 @@ public class Stockfish implements ChessEngine {
         return bestMoveLines;
     }
 
-    protected List<String> waitUntilReady() throws IOException, TimeoutException {
+    protected List<String> waitUntilReady() throws IOException,
+            TimeoutException {
         this.process.writeCommand("isready");
         return this.process.readLinesUntil("readyok",
                 this.config.getTimeoutInMs());
