@@ -13,6 +13,10 @@
     </description>
     <packaging>pom</packaging>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <modules>
         <module>xchess-api</module>
         <module>engines</module>

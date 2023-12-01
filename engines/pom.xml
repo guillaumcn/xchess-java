@@ -10,6 +10,9 @@
     </parent>
 
     <artifactId>engines</artifactId>
+    <name>Chess engine module</name>
+    <description>Provide integration for chess engines as Stockfish
+    </description>
     <packaging>jar</packaging>
 
     <properties>
