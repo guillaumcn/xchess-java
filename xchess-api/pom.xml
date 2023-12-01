@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.xchess</groupId>
-        <artifactId>java-modules</artifactId>
+        <groupId>io.github.guillaumcn</groupId>
+        <artifactId>java-chess-modules</artifactId>
         <version>1.0.0</version>
     </parent>
     <artifactId>engine.api</artifactId>
@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>engines</artifactId>
+            <artifactId>chess-engines</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
