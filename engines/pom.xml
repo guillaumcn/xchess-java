@@ -13,7 +13,7 @@
     <name>Chess engine module</name>
     <description>Provides integration for chess engines as Stockfish
     </description>
-    <url>https://github.com/guillaumcn/xchess-java</url>
+    <url>https://github.com/guillaumcn/java-chess-modules</url>
     <packaging>jar</packaging>
     <licenses>
         <license>
@@ -26,17 +26,17 @@
             <name>Guillaume Lerda</name>
             <email>lerda.guillaume@gmail.com</email>
             <organization>Guillaume Lerda</organization>
-            <organizationUrl>https://github.com/guillaumcn/xchess-java
+            <organizationUrl>https://github.com/guillaumcn/java-chess-modules
             </organizationUrl>
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/guillaumcn/xchess-java.git
+        <connection>scm:git:git://github.com/guillaumcn/java-chess-modules.git
         </connection>
         <developerConnection>
-            scm:git:ssh://github.com:guillaumcn/xchess-java.git
+            scm:git:ssh://github.com:guillaumcn/java-chess-modules.git
         </developerConnection>
-        <url>https://github.com/guillaumcn/xchess-java</url>
+        <url>https://github.com/guillaumcn/java-chess-modules</url>
     </scm>
 
     <properties>

@@ -60,7 +60,8 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/guillaumcn/xchess-java</url>
+            <url>https://maven.pkg.github.com/guillaumcn/java-chess-modules
+            </url>
         </repository>
     </distributionManagement>
 </project>
