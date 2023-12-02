@@ -217,6 +217,12 @@ public class Stockfish implements ChessEngine {
         return true;
     }
 
+    /**
+     * @return The best move from process output
+     * @throws IOException      If any error occurs communicating with
+     *                          Stockfish engine process
+     * @throws TimeoutException if read timeout
+     */
     private String getBestMoveFromOutput() throws IOException,
             TimeoutException {
         List<String> evaluationLines = getEvaluationLines();
@@ -228,6 +234,12 @@ public class Stockfish implements ChessEngine {
         return bestMove.equals("(none)") ? null : bestMove;
     }
 
+    /**
+     * @return Evaluation lines from evaluation request
+     * @throws TimeoutException if read timeout
+     * @throws IOException      If any error occurs communicating with
+     *                          Stockfish engine process
+     */
     private List<String> getEvaluationLines() throws TimeoutException,
             IOException {
         List<String> bestMoveLines =
@@ -237,6 +249,12 @@ public class Stockfish implements ChessEngine {
         return bestMoveLines;
     }
 
+    /**
+     * @return list of messages received before "readyok"
+     * @throws IOException      If any error occurs communicating with
+     * Stockfish engine process
+     * @throws TimeoutException if read timeout
+     */
     protected List<String> waitUntilReady() throws IOException,
             TimeoutException {
         this.process.writeCommand("isready");

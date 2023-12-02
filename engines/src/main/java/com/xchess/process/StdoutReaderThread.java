@@ -8,6 +8,9 @@ import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
+/**
+ * A thread reading a java Inputstream until a predicate matches
+ */
 public class StdoutReaderThread extends Thread {
     private boolean keepRunning;
     private final List<String> resultLines;
@@ -16,6 +19,11 @@ public class StdoutReaderThread extends Thread {
     private IOException exceptionThrown;
     private final int timeoutInMs;
 
+    /**
+     * @param stdoutReader The buffered reader
+     * @param endPredicate The predicate to match
+     * @param timeoutInMs  The maximum timeout
+     */
     public StdoutReaderThread(BufferedReader stdoutReader,
                               Predicate<String> endPredicate, int timeoutInMs) {
         this.keepRunning = true;
@@ -26,6 +34,12 @@ public class StdoutReaderThread extends Thread {
         this.timeoutInMs = timeoutInMs;
     }
 
+    /**
+     * @return The read lines including the matching line
+     * @throws TimeoutException if timeout is reached
+     * @throws IOException      If any error occurs during communicating with
+     *                          process
+     */
     public List<String> getLines() throws TimeoutException, IOException {
         this.start();
 
@@ -49,6 +63,9 @@ public class StdoutReaderThread extends Thread {
         return this.resultLines;
     }
 
+    /**
+     * Starts the thread
+     */
     @Override
     public void run() {
         super.run();

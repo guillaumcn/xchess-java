@@ -37,6 +37,10 @@ public class FenSyntaxValidator {
         return true;
     }
 
+    /**
+     * @param fenPart The fen part to validate
+     * @return true if valid
+     */
     private static boolean isFenPartValid(String fenPart) {
         boolean previousWasDigit = false;
         String[] fenPartChars = fenPart.split("");
