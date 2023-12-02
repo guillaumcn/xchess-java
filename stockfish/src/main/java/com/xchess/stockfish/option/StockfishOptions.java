@@ -294,4 +294,20 @@ public class StockfishOptions {
                 skillLevel, debugLogFile, slowMover, uciChess960, uciElo,
                 uciLimitStrength);
     }
+
+    @Override
+    public String toString() {
+        return "StockfishOptions{" +
+                "threads=" + threads +
+                ", hash=" + hash +
+                ", ponder=" + ponder +
+                ", moveOverhead=" + moveOverhead +
+                ", skillLevel=" + skillLevel +
+                ", debugLogFile='" + debugLogFile + '\'' +
+                ", slowMover=" + slowMover +
+                ", uciChess960=" + uciChess960 +
+                ", uciElo=" + uciElo +
+                ", uciLimitStrength=" + uciLimitStrength +
+                '}';
+    }
 }
