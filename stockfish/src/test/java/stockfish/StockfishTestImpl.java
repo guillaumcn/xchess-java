@@ -1,8 +1,8 @@
-package com.xchess.stockfish;
+package stockfish;
 
 import com.xchess.process.ProcessWrapper;
+import com.xchess.stockfish.Stockfish;
 import com.xchess.stockfish.config.StockfishConfig;
-import com.xchess.stockfish.option.StockfishOptions;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,18 +46,21 @@ public class StockfishTestImpl extends Stockfish {
     }
 
     @Override
-    public List<String> getPossibleMoves() throws IOException, TimeoutException {
+    public List<String> getPossibleMoves() throws IOException,
+            TimeoutException {
         if (Objects.isNull(this.successivePossibleMoves) || this.successivePossibleMoves.size() <= possibleMovesCallCount) {
             return super.getPossibleMoves();
         } else {
-            List<String> result = this.successivePossibleMoves.get(possibleMovesCallCount);
+            List<String> result =
+                    this.successivePossibleMoves.get(possibleMovesCallCount);
             possibleMovesCallCount++;
             return result;
         }
     }
 
     @Override
-    protected List<String> waitUntilReady() throws IOException, TimeoutException {
+    protected List<String> waitUntilReady() throws IOException,
+            TimeoutException {
         if (waitUntilReadyThrowException) {
             throw new IOException();
         } else {

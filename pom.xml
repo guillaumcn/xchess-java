@@ -20,6 +20,7 @@
     <modules>
         <module>xchess-api</module>
         <module>engines</module>
+        <module>stockfish</module>
     </modules>
 
     <profiles>

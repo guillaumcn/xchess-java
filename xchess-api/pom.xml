@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>chess-engines</artifactId>
+            <artifactId>chess-stockfish</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

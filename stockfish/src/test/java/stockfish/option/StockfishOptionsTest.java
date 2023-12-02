@@ -1,5 +1,6 @@
-package com.xchess.stockfish.option;
+package stockfish.option;
 
+import com.xchess.stockfish.option.StockfishOptions;
 import org.junit.Test;
 
 import java.util.Arrays;

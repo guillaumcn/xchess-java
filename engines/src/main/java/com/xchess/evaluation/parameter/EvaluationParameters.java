@@ -1,4 +1,4 @@
-package com.xchess.stockfish.evaluation.parameter;
+package com.xchess.evaluation.parameter;
 
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 /**
  * Parameters for a Stockfish evaluation of type "go ..."
  */
-public class StockfishEvaluationParameters {
+public class EvaluationParameters {
     private List<String> searchMoves;
     private Integer wtime;
     private Integer btime;
@@ -25,7 +25,7 @@ public class StockfishEvaluationParameters {
      * @param searchMoves List of moves
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setSearchMoves(List<String> searchMoves) {
+    public EvaluationParameters setSearchMoves(List<String> searchMoves) {
         this.searchMoves = searchMoves;
         return this;
     }
@@ -36,7 +36,7 @@ public class StockfishEvaluationParameters {
      * @param wtime the time left in ms
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setWtime(Integer wtime) {
+    public EvaluationParameters setWtime(Integer wtime) {
         this.wtime = wtime;
         return this;
     }
@@ -47,7 +47,7 @@ public class StockfishEvaluationParameters {
      * @param btime the time left in ms
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setBtime(Integer btime) {
+    public EvaluationParameters setBtime(Integer btime) {
         this.btime = btime;
         return this;
     }
@@ -58,7 +58,7 @@ public class StockfishEvaluationParameters {
      * @param winc the increment in ms
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setWinc(Integer winc) {
+    public EvaluationParameters setWinc(Integer winc) {
         this.winc = winc;
         return this;
     }
@@ -69,7 +69,7 @@ public class StockfishEvaluationParameters {
      * @param binc the increment in ms
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setBinc(Integer binc) {
+    public EvaluationParameters setBinc(Integer binc) {
         this.binc = binc;
         return this;
     }
@@ -80,7 +80,7 @@ public class StockfishEvaluationParameters {
      * @param movestogo number of moves
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setMovestogo(Integer movestogo) {
+    public EvaluationParameters setMovestogo(Integer movestogo) {
         this.movestogo = movestogo;
         return this;
     }
@@ -91,7 +91,7 @@ public class StockfishEvaluationParameters {
      * @param depth the number of piles
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setDepth(Integer depth) {
+    public EvaluationParameters setDepth(Integer depth) {
         this.depth = depth;
         return this;
     }
@@ -102,7 +102,7 @@ public class StockfishEvaluationParameters {
      * @param nodes The number of nodes
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setNodes(Integer nodes) {
+    public EvaluationParameters setNodes(Integer nodes) {
         this.nodes = nodes;
         return this;
     }
@@ -113,7 +113,7 @@ public class StockfishEvaluationParameters {
      * @param mate the number of moves
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setMate(Integer mate) {
+    public EvaluationParameters setMate(Integer mate) {
         this.mate = mate;
         return this;
     }
@@ -125,7 +125,7 @@ public class StockfishEvaluationParameters {
      *                 config of stockfish engine integration
      * @return the parameter object
      */
-    public StockfishEvaluationParameters setMovetime(Integer movetime) {
+    public EvaluationParameters setMovetime(Integer movetime) {
         this.movetime = movetime;
         return this;
     }

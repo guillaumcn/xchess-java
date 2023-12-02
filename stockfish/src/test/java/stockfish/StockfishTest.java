@@ -1,11 +1,11 @@
-package com.xchess.stockfish;
+package stockfish;
 
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
-import com.xchess.stockfish.evaluation.parameter.StockfishEvaluationParameters;
+import com.xchess.evaluation.parameter.EvaluationParameters;
+import com.xchess.process.ProcessWrapper;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
-import com.xchess.process.ProcessWrapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,31 +52,37 @@ public class StockfishTest {
     }
 
     @Test
-    public void shouldWriteOptionsCommandToProcessInput() throws IOException, TimeoutException {
+    public void shouldWriteOptionsCommandToProcessInput() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
         StockfishOptions options = new StockfishOptions()
                 .setHash(12)
                 .setThreads(25)
                 .setDebugLogFile("debugFile.txt");
         this.subject.setOptions(options);
-        for (String command:
+        for (String command :
                 options.getCommands()) {
             verify(this.process, times(1)).writeCommand(command);
         }
     }
 
     @Test
-    public void shouldMergeWithCurrentOptions() throws IOException, TimeoutException {
+    public void shouldMergeWithCurrentOptions() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
         StockfishOptions currentOptions = StockfishOptions.getDefaultOptions();
         StockfishOptions newOptions = new StockfishOptions()
                 .setPonder(true)
                 .setThreads(45);
         this.subject.setOptions(newOptions);
-        assertEquals(currentOptions.merge(newOptions), this.subject.getOptions());
-        verify(this.process, times(2)).writeCommand("setoption name Hash value 16");
-        verify(this.process, times(1)).writeCommand("setoption name Ponder value true");
-        verify(this.process, times(1)).writeCommand("setoption name Threads value 45");
+        assertEquals(currentOptions.merge(newOptions),
+                this.subject.getOptions());
+        verify(this.process, times(2)).writeCommand("setoption name Hash " +
+                "value 16");
+        verify(this.process, times(1)).writeCommand("setoption name Ponder " +
+                "value true");
+        verify(this.process, times(1)).writeCommand("setoption name Threads " +
+                "value 45");
     }
 
     @Test
@@ -108,7 +114,8 @@ public class StockfishTest {
     }
 
     @Test
-    public void shouldGetPossibleMovesForSpecificSquare() throws IOException, TimeoutException {
+    public void shouldGetPossibleMovesForSpecificSquare() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
@@ -132,11 +139,13 @@ public class StockfishTest {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
-        assertThrows(IllegalArgumentException.class, () -> this.subject.getPossibleMoves("a9"));
+        assertThrows(IllegalArgumentException.class,
+                () -> this.subject.getPossibleMoves("a9"));
     }
 
     @Test
-    public void shouldReturnTrueIfAMoveIsPossible() throws IOException, TimeoutException {
+    public void shouldReturnTrueIfAMoveIsPossible() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
@@ -144,7 +153,8 @@ public class StockfishTest {
     }
 
     @Test
-    public void shouldReturnFalseIfAMoveIsNotPossible() throws IOException, TimeoutException {
+    public void shouldReturnFalseIfAMoveIsNotPossible() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
@@ -156,11 +166,13 @@ public class StockfishTest {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
-        assertThrows(IllegalArgumentException.class, () -> this.subject.isMovePossible("a9a8"));
+        assertThrows(IllegalArgumentException.class,
+                () -> this.subject.isMovePossible("a9a8"));
     }
 
     @Test
-    public void shouldMoveToStartPosition() throws IOException, TimeoutException {
+    public void shouldMoveToStartPosition() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
         this.subject.moveToStartPosition(false);
         verify(this.process, times(1)).writeCommand("position startpos");
@@ -207,9 +219,15 @@ public class StockfishTest {
         ));
         this.subject.move(Arrays.asList("a2a4", "a7a5", "b2b4"));
 
-        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 moves a2a4");
-        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1 moves a7a5");
-        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/1ppppppp/8/p7/P7/8/1PPPPPPP/RNBQKBNR w KQkq - 0 2 moves b2b4");
+        verify(this.process, times(1)).writeCommand("position fen " +
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 " +
+                "moves a2a4");
+        verify(this.process, times(1)).writeCommand("position fen " +
+                "rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1 " +
+                "moves a7a5");
+        verify(this.process, times(1)).writeCommand("position fen " +
+                "rnbqkbnr/1ppppppp/8/p7/P7/8/1PPPPPPP/RNBQKBNR w KQkq - 0 2 " +
+                "moves b2b4");
     }
 
     @Test
@@ -226,11 +244,17 @@ public class StockfishTest {
                 Collections.singletonList("a7a5"),
                 Collections.emptyList()
         ));
-        assertThrows(IllegalArgumentException.class, () -> this.subject.move(Arrays.asList("a2a4", "a7a5", "b2b4")));
+        assertThrows(IllegalArgumentException.class,
+                () -> this.subject.move(Arrays.asList("a2a4", "a7a5", "b2b4")));
 
-        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 moves a2a4");
-        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1 moves a7a5");
-        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        verify(this.process, times(1)).writeCommand("position fen " +
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 " +
+                "moves a2a4");
+        verify(this.process, times(1)).writeCommand("position fen " +
+                "rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1 " +
+                "moves a7a5");
+        verify(this.process, times(1)).writeCommand("position fen " +
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }
 
     @Test
@@ -243,42 +267,52 @@ public class StockfishTest {
                 Collections.singletonList("a2a4")
         ));
         when(this.process.readLinesUntil(any(Pattern.class), anyInt())).thenThrow(TimeoutException.class);
-        assertThrows(TimeoutException.class, () -> this.subject.move(Collections.singletonList("a2a4")));
+        assertThrows(TimeoutException.class,
+                () -> this.subject.move(Collections.singletonList("a2a4")));
 
-        verify(this.process, times(1)).writeCommand("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        verify(this.process, times(1)).writeCommand("position fen " +
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }
 
     @Test
     public void shouldThrowExceptionIfOneOnTheMovesHasInvalidSyntax() throws IOException, TimeoutException {
         initStockfishInstance(true);
-        assertThrows(IllegalArgumentException.class, () -> this.subject.move(Arrays.asList("a2a4", "a8a9")));
+        assertThrows(IllegalArgumentException.class,
+                () -> this.subject.move(Arrays.asList("a2a4", "a8a9")));
     }
 
     @Test
     public void shouldGetBestMove() throws IOException, TimeoutException {
         initStockfishInstance(true);
-        bindFileToLineReaderWhenWriting("stockfish/outputs/goDepth10InitialPosition.txt",
+        bindFileToLineReaderWhenWriting("stockfish/outputs" +
+                        "/goDepth10InitialPosition.txt",
                 "go depth 10");
-        assertEquals("e2e4", this.subject.findBestMove(new StockfishEvaluationParameters().setDepth(10)));
+        assertEquals("e2e4",
+                this.subject.findBestMove(new EvaluationParameters().setDepth(10)));
     }
 
     @Test
-    public void shouldGetBestMoveReturnsNullIfEndGame() throws IOException, TimeoutException {
+    public void shouldGetBestMoveReturnsNullIfEndGame() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
-        bindFileToLineReaderWhenWriting("stockfish/outputs/goDepth10EndGame.txt",
+        bindFileToLineReaderWhenWriting("stockfish/outputs/goDepth10EndGame" +
+                        ".txt",
                 "go depth 10");
-        assertNull(this.subject.findBestMove(new StockfishEvaluationParameters().setDepth(10)));
+        assertNull(this.subject.findBestMove(new EvaluationParameters().setDepth(10)));
     }
 
     @Test
-    public void shouldGetCentipawnsEvaluation() throws IOException, TimeoutException {
+    public void shouldGetCentipawnsEvaluation() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
-        bindFileToLineReaderWhenWriting("stockfish/outputs/centipawnEvaluation.txt",
+        bindFileToLineReaderWhenWriting("stockfish/outputs" +
+                        "/centipawnEvaluation.txt",
                 "go depth 10");
-        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr" +
+                "/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
         assertEquals(
                 new ChessEngineEvaluation(ChessEngineEvaluationType.CENTIPAWNS, 105),
-                this.subject.getPositionEvaluation(new StockfishEvaluationParameters().setDepth(10))
+                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
         );
     }
 
@@ -287,27 +321,31 @@ public class StockfishTest {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/mateEvaluation.txt",
                 "go depth 10");
-        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr/1ppppppp/8/8/2B1P3/p4Q2/PPPP1PPP/RNB1K1NR w KQkq - 0 4"));
+        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr" +
+                "/1ppppppp/8/8/2B1P3/p4Q2/PPPP1PPP/RNB1K1NR w KQkq - 0 4"));
         assertEquals(
                 new ChessEngineEvaluation(ChessEngineEvaluationType.MATE, 1),
-                this.subject.getPositionEvaluation(new StockfishEvaluationParameters().setDepth(10))
+                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
         );
     }
 
     @Test
-    public void shouldGetEvaluationForBlack() throws IOException, TimeoutException {
+    public void shouldGetEvaluationForBlack() throws IOException,
+            TimeoutException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/mateEvaluation.txt",
                 "go depth 10");
-        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr/1ppppppp/8/8/2B1P3/p4Q2/PPPP1PPP/RNB1K1NR b KQkq - 0 4"));
+        this.subject.setSuccessiveFens(Collections.singletonList("rnbqkbnr" +
+                "/1ppppppp/8/8/2B1P3/p4Q2/PPPP1PPP/RNB1K1NR b KQkq - 0 4"));
         assertEquals(
                 new ChessEngineEvaluation(ChessEngineEvaluationType.MATE, -1),
-                this.subject.getPositionEvaluation(new StockfishEvaluationParameters().setDepth(10))
+                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
         );
     }
 
     @Test
-    public void shouldReturnTrueIfHealthcheckNoException() throws IOException, TimeoutException {
+    public void shouldReturnTrueIfHealthcheckNoException() throws IOException
+            , TimeoutException {
         initStockfishInstance(true);
         assertTrue(this.subject.healthCheck());
     }

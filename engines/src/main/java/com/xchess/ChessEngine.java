@@ -1,7 +1,7 @@
 package com.xchess;
 
 import com.xchess.evaluation.ChessEngineEvaluation;
-import com.xchess.stockfish.evaluation.parameter.StockfishEvaluationParameters;
+import com.xchess.evaluation.parameter.EvaluationParameters;
 
 import java.io.IOException;
 import java.util.List;
@@ -105,24 +105,24 @@ public interface ChessEngine {
      * Find the best move in current position
      *
      * @param options the evaluation parameters. See
-     *                {@link StockfishEvaluationParameters}
+     *                {@link EvaluationParameters}
      * @return The best move in format "a1a2"
      * @throws IOException      If any error occurs communicating with engine
      *                          process
      * @throws TimeoutException In case of timeout reached when reading
      */
-    String findBestMove(StockfishEvaluationParameters options) throws IOException,
+    String findBestMove(EvaluationParameters options) throws IOException,
             TimeoutException;
 
     /**
      * @param options the evaluation parameters. See
-     *                {@link StockfishEvaluationParameters}
+     *                {@link EvaluationParameters}
      * @return The chess engine evaluation. See {@link ChessEngineEvaluation}
      * @throws IOException      If any error occurs communicating with engine
      *                          process
      * @throws TimeoutException In case of timeout reached when reading
      */
-    ChessEngineEvaluation getPositionEvaluation(StockfishEvaluationParameters options) throws IOException, TimeoutException;
+    ChessEngineEvaluation getPositionEvaluation(EvaluationParameters options) throws IOException, TimeoutException;
 
     /**
      * @return The current engine status
