@@ -121,8 +121,8 @@ public class ProcessWrapper {
      * @throws IOException      If any error occurs during communicating with
      *                          process
      */
-    private List<String> readLinesUntil(Predicate<String> matchPredicate,
-                                        int timeoutInMs) throws TimeoutException, IOException {
+    private synchronized List<String> readLinesUntil(Predicate<String> matchPredicate,
+                                                     int timeoutInMs) throws TimeoutException, IOException {
         if (timeoutInMs <= 0) {
             throw new IllegalArgumentException("Read timeout should be " +
                     "greater than 0");

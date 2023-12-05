@@ -77,7 +77,7 @@ public class Stockfish implements ChessEngine {
      *                          process
      * @throws TimeoutException in case of timeout reached when reading
      */
-    public void setOptions(StockfishOptions options) throws IOException,
+    public synchronized void setOptions(StockfishOptions options) throws IOException,
             TimeoutException {
         this.options = this.options.merge(options);
         List<String> commands = this.options.getCommands();
@@ -92,7 +92,8 @@ public class Stockfish implements ChessEngine {
         return engineVersion;
     }
 
-    public String getFenPosition() throws IOException, TimeoutException {
+    public synchronized String getFenPosition() throws IOException,
+            TimeoutException {
         this.process.writeCommand("d");
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
                         "^Checkers.*$"),
@@ -105,7 +106,7 @@ public class Stockfish implements ChessEngine {
         return fenLineOptional.substring(5);
     }
 
-    public List<String> getPossibleMoves() throws IOException,
+    public synchronized List<String> getPossibleMoves() throws IOException,
             TimeoutException {
         this.process.writeCommand("go perft 1");
         List<String> lines = this.process.readLinesUntil(Pattern.compile(
@@ -116,7 +117,7 @@ public class Stockfish implements ChessEngine {
                 line)).map(line -> line.split(":")[0]).toList();
     }
 
-    public List<String> getPossibleMoves(String square) throws IOException,
+    public synchronized List<String> getPossibleMoves(String square) throws IOException,
             TimeoutException {
         String lowerCaseSquare = square.toLowerCase();
         if (!SquareValidator.isSquareSyntaxValid(lowerCaseSquare)) {
@@ -125,7 +126,7 @@ public class Stockfish implements ChessEngine {
         return this.getPossibleMoves().stream().filter(move -> move.startsWith(lowerCaseSquare)).toList();
     }
 
-    public boolean isMovePossible(String move) throws IOException,
+    public synchronized boolean isMovePossible(String move) throws IOException,
             TimeoutException {
         String lowerCaseMove = move.toLowerCase();
         if (!MoveValidator.isMoveValid(lowerCaseMove)) {
@@ -134,7 +135,7 @@ public class Stockfish implements ChessEngine {
         return getPossibleMoves().contains(lowerCaseMove);
     }
 
-    public void moveToStartPosition(boolean newGame) throws IOException,
+    public synchronized void moveToStartPosition(boolean newGame) throws IOException,
             TimeoutException {
         if (newGame) {
             this.process.writeCommand("ucinewgame");
@@ -143,7 +144,7 @@ public class Stockfish implements ChessEngine {
         this.waitUntilReady();
     }
 
-    public void moveToFenPosition(String fen, boolean newGame) throws IOException,
+    public synchronized void moveToFenPosition(String fen, boolean newGame) throws IOException,
             TimeoutException {
         if (newGame) {
             this.process.writeCommand("ucinewgame");
@@ -152,7 +153,8 @@ public class Stockfish implements ChessEngine {
         this.waitUntilReady();
     }
 
-    public void move(List<String> moves) throws IOException, TimeoutException {
+    public synchronized void move(List<String> moves) throws IOException,
+            TimeoutException {
         List<String> lowerCasesMoves =
                 moves.stream().map(String::toLowerCase).toList();
         int invalidMoveIndex =
@@ -180,13 +182,13 @@ public class Stockfish implements ChessEngine {
         }
     }
 
-    public String findBestMove(EvaluationParameters options) throws IOException, TimeoutException {
+    public synchronized String findBestMove(EvaluationParameters options) throws IOException, TimeoutException {
         this.process.writeCommand(options.build());
 
         return this.getBestMoveFromOutput();
     }
 
-    public ChessEngineEvaluation getPositionEvaluation(EvaluationParameters options) throws IOException,
+    public synchronized ChessEngineEvaluation getPositionEvaluation(EvaluationParameters options) throws IOException,
             TimeoutException {
         String currentFen = this.getFenPosition();
         int multiplier = currentFen.contains("w") ? 1 : -1;
@@ -208,7 +210,7 @@ public class Stockfish implements ChessEngine {
                 Integer.parseInt(value) * multiplier);
     }
 
-    public boolean healthCheck() {
+    public synchronized boolean healthCheck() {
         try {
             this.waitUntilReady();
         } catch (IOException | TimeoutException e) {
@@ -252,7 +254,7 @@ public class Stockfish implements ChessEngine {
     /**
      * @return list of messages received before "readyok"
      * @throws IOException      If any error occurs communicating with
-     * Stockfish engine process
+     *                          Stockfish engine process
      * @throws TimeoutException if read timeout
      */
     protected List<String> waitUntilReady() throws IOException,
