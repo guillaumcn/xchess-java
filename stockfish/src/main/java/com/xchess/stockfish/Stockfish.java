@@ -194,10 +194,12 @@ public class Stockfish implements ChessEngine {
         String[] splittedLastInfoLine = lastInfoLine.split(" ");
         String type = splittedLastInfoLine[1];
         String value = splittedLastInfoLine[2];
-        return new ChessEngineEvaluation(type.equals("cp") ?
-                ChessEngineEvaluationType.CENTIPAWNS :
-                ChessEngineEvaluationType.MATE,
-                Integer.parseInt(value) * multiplier);
+        return ChessEngineEvaluation.builder()
+                .type(type.equals("cp") ?
+                        ChessEngineEvaluationType.CENTIPAWNS :
+                        ChessEngineEvaluationType.MATE)
+                .value(Integer.parseInt(value) * multiplier)
+                .build();
     }
 
     public synchronized boolean healthCheck() {

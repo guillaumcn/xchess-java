@@ -15,7 +15,7 @@ import java.util.function.Function;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class PoolWrapper {
-    private final GenericObjectPool<ChessEngine> pool;
+    protected GenericObjectPool<ChessEngine> pool;
 
     @Autowired
     public PoolWrapper(PoolProperties poolProperties,
@@ -31,8 +31,11 @@ public class PoolWrapper {
         this.pool.preparePool();
     }
 
-    public <T> T doAction(Function<ChessEngine, T> action) throws Exception {
-        ChessEngine engineWorker = this.pool.borrowObject();
+    protected PoolWrapper() {
+    }
+
+    public <T> T queueAction(Function<ChessEngine, T> action) throws Exception {
+        ChessEngine engineWorker = borrowObject();
         try {
             T result = action.apply(engineWorker);
             this.pool.returnObject(engineWorker);
@@ -41,5 +44,9 @@ public class PoolWrapper {
             this.pool.invalidateObject(engineWorker);
             throw e;
         }
+    }
+
+    protected ChessEngine borrowObject() throws Exception {
+        return this.pool.borrowObject();
     }
 }
