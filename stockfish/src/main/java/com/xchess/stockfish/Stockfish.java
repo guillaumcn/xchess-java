@@ -9,6 +9,7 @@ import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
 import com.xchess.validators.MoveValidator;
 import com.xchess.validators.SquareValidator;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -22,7 +23,9 @@ import java.util.regex.Pattern;
 public class Stockfish implements ChessEngine {
     private final ProcessWrapper process;
     private final StockfishConfig config;
+    @Getter
     private StockfishOptions options;
+    @Getter
     private final Float engineVersion;
 
     /**
@@ -59,15 +62,6 @@ public class Stockfish implements ChessEngine {
     }
 
     /**
-     * Get current Stockfish engine options
-     *
-     * @return the current options
-     */
-    public StockfishOptions getOptions() {
-        return this.options;
-    }
-
-    /**
      * Set current Stockfish engine options. New options will be merged with
      * current. See {@link StockfishOptions#merge(StockfishOptions)}
      *
@@ -86,10 +80,6 @@ public class Stockfish implements ChessEngine {
             this.process.writeCommand(command);
             this.waitUntilReady();
         }
-    }
-
-    public Float getEngineVersion() {
-        return engineVersion;
     }
 
     public synchronized String getFenPosition() throws IOException,
