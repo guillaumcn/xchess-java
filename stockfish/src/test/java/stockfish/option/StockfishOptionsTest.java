@@ -31,12 +31,14 @@ public class StockfishOptionsTest {
 
     @Test
     public void mergeShouldOverrideExistingAndAddNew() {
-        StockfishOptions base = new StockfishOptions()
-                .setHash(12)
-                .setThreads(12);
-        StockfishOptions other = new StockfishOptions()
-                .setThreads(25)
-                .setDebugLogFile("file.txt");
+        StockfishOptions base = StockfishOptions.builder()
+                .hash(12)
+                .threads(12)
+                .build();
+        StockfishOptions other = StockfishOptions.builder()
+                .threads(25)
+                .debugLogFile("file.txt")
+                .build();
         StockfishOptions result = base.merge(other);
 
         assertEquals(

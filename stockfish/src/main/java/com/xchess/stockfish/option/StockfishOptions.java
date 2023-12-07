@@ -1,5 +1,9 @@
 package com.xchess.stockfish.option;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,6 +12,9 @@ import java.util.Objects;
  * Stockfish engine options
  * For more information, see Stockfish engine complete documentation
  */
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StockfishOptions {
     private Integer threads;
     private Integer hash;
@@ -20,9 +27,6 @@ public class StockfishOptions {
     private Integer uciElo;
     private Boolean uciLimitStrength;
 
-    public StockfishOptions() {
-    }
-
     public StockfishOptions(StockfishOptions other) {
         this.threads = other.threads;
         this.hash = other.hash;
@@ -34,127 +38,6 @@ public class StockfishOptions {
         this.uciChess960 = other.uciChess960;
         this.uciElo = other.uciElo;
         this.uciLimitStrength = other.uciLimitStrength;
-    }
-
-    /**
-     * @param threads The number of CPU threads used for searching a position
-     *                . For best performance, set this equal to the number of
-     *                CPU cores available
-     * @return the options object
-     */
-    public StockfishOptions setThreads(Integer threads) {
-        this.threads = threads;
-        return this;
-    }
-
-    /**
-     * @param hash The size of the hash table in MB. It is recommended to set
-     *             Hash after setting Threads
-     * @return the options object
-     */
-    public StockfishOptions setHash(Integer hash) {
-        this.hash = hash;
-        return this;
-    }
-
-    /**
-     * Let Stockfish ponder its next move while the opponent is thinking
-     *
-     * @param ponder the boolean value
-     * @return the options object
-     */
-    public StockfishOptions setPonder(Boolean ponder) {
-        this.ponder = ponder;
-        return this;
-    }
-
-    /**
-     * Assume a time delay of x ms due to network and GUI overheads.
-     * Specifying a value larger than the default is needed to avoid time
-     * losses or near instantaneous moves, in particular for time controls
-     * without increment (e.g. sudden death). The default is suitable for
-     * engine-engine matches played locally on dedicated hardware, while it
-     * needs to be increased on a loaded system, when playing over a network,
-     * or when using certain GUIs such as Arena or ChessGUI
-     *
-     * @param moveOverhead the delay in ms
-     * @return the options object
-     */
-    public StockfishOptions setMoveOverhead(Integer moveOverhead) {
-        this.moveOverhead = moveOverhead;
-        return this;
-    }
-
-    /**
-     * Lower the Skill Level in order to make Stockfish play weaker (see also
-     * UCI_LimitStrength). Internally, MultiPV is enabled, and with a certain
-     * probability depending on the Skill Level, a weaker move will be played.
-     *
-     * @param skillLevel the skill level
-     * @return the options object
-     */
-    public StockfishOptions setSkillLevel(Integer skillLevel) {
-        this.skillLevel = skillLevel;
-        return this;
-    }
-
-    /**
-     * Write all communication to and from the engine into a text file
-     *
-     * @param debugLogFile the file path
-     * @return the options object
-     */
-    public StockfishOptions setDebugLogFile(String debugLogFile) {
-        this.debugLogFile = debugLogFile;
-        return this;
-    }
-
-    /**
-     * Lower values will make Stockfish take less time in games, higher
-     * values will make it think longer
-     *
-     * @param slowMover the value
-     * @return the options object
-     */
-    public StockfishOptions setSlowMover(Integer slowMover) {
-        this.slowMover = slowMover;
-        return this;
-    }
-
-    /**
-     * An option handled by your GUI. If true, Stockfish will play Chess960
-     *
-     * @param uciChess960 activated or not
-     * @return the options object
-     */
-    public StockfishOptions setUciChess960(Boolean uciChess960) {
-        this.uciChess960 = uciChess960;
-        return this;
-    }
-
-    /**
-     * If enabled by UCI_LimitStrength, aim for an engine strength of the
-     * given Elo. This Elo rating has been calibrated at a time control of
-     * 60s+0.6s and anchored to CCRL 40/4
-     *
-     * @param uciElo the elo value
-     * @return the options object
-     */
-    public StockfishOptions setUciElo(Integer uciElo) {
-        this.uciElo = uciElo;
-        return this;
-    }
-
-    /**
-     * Enable weaker play aiming for an Elo rating as set by UCI_Elo. This
-     * option overrides Skill Level
-     *
-     * @param uciLimitStrength activated or not
-     * @return the options object
-     */
-    public StockfishOptions setUciLimitStrength(Boolean uciLimitStrength) {
-        this.uciLimitStrength = uciLimitStrength;
-        return this;
     }
 
     /**
@@ -266,17 +149,18 @@ public class StockfishOptions {
      * @return the Stockfish options object
      */
     public static StockfishOptions getDefaultOptions() {
-        return new StockfishOptions()
-                .setThreads(1)
-                .setHash(16)
-                .setPonder(false)
-                .setMoveOverhead(10)
-                .setSkillLevel(20)
-                .setDebugLogFile("")
-                .setSlowMover(100)
-                .setUciChess960(false)
-                .setUciElo(1320)
-                .setUciLimitStrength(false);
+        return StockfishOptions.builder()
+                .threads(1)
+                .hash(16)
+                .ponder(false)
+                .moveOverhead(10)
+                .skillLevel(20)
+                .debugLogFile("")
+                .slowMover(100)
+                .uciChess960(false)
+                .uciElo(1320)
+                .uciLimitStrength(false)
+                .build();
     }
 
     @Override

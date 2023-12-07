@@ -1,24 +1,23 @@
 package com.xchess.stockfish.config;
 
 import com.xchess.stockfish.constants.Constants;
+import lombok.Getter;
 
 /**
  * Class for configuration of Stockfish engine integration
  */
+@Getter
 public class StockfishConfig {
-    private int timeoutInMs;
-
-    public StockfishConfig() {
-        this.timeoutInMs = Constants.DEFAULT_TIMEOUT;
-    }
-
     /**
+     * -- GETTER --
      * Get the timeout for all readings actions on the Stockfish process
      *
      * @return current config value of timeout
      */
-    public int getTimeoutInMs() {
-        return timeoutInMs;
+    private int timeoutInMs;
+
+    public StockfishConfig() {
+        this.timeoutInMs = Constants.DEFAULT_TIMEOUT;
     }
 
     /**

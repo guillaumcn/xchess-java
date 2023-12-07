@@ -28,6 +28,10 @@ public class Main {
         Stockfish stockfish = new Stockfish(pw, sc);
 
         // Example of use
+        
+        // Update options
+        stockfish.setOptions(StockfishOptions.builder().threads(20).build());
+        // Move to start position
         stockfish.moveToStartPosition(true);
         // This will show a list of possible moves from current position
         System.out.println(stockfish.getPossibleMoves());

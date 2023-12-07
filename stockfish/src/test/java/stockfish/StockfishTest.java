@@ -55,10 +55,11 @@ public class StockfishTest {
     public void shouldWriteOptionsCommandToProcessInput() throws IOException,
             TimeoutException {
         initStockfishInstance(true);
-        StockfishOptions options = new StockfishOptions()
-                .setHash(12)
-                .setThreads(25)
-                .setDebugLogFile("debugFile.txt");
+        StockfishOptions options = StockfishOptions.builder()
+                .hash(12)
+                .threads(25)
+                .debugLogFile("debugFile.txt")
+                .build();
         this.subject.setOptions(options);
         for (String command :
                 options.getCommands()) {
@@ -71,9 +72,10 @@ public class StockfishTest {
             TimeoutException {
         initStockfishInstance(true);
         StockfishOptions currentOptions = StockfishOptions.getDefaultOptions();
-        StockfishOptions newOptions = new StockfishOptions()
-                .setPonder(true)
-                .setThreads(45);
+        StockfishOptions newOptions = StockfishOptions.builder()
+                .ponder(true)
+                .threads(45)
+                .build();
         this.subject.setOptions(newOptions);
         assertEquals(currentOptions.merge(newOptions),
                 this.subject.getOptions());
