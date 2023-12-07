@@ -288,7 +288,7 @@ public class StockfishTest {
                         "/goDepth10InitialPosition.txt",
                 "go depth 10");
         assertEquals("e2e4",
-                this.subject.findBestMove(new EvaluationParameters().setDepth(10)));
+                this.subject.findBestMove(EvaluationParameters.builder().depth(10).build()));
     }
 
     @Test
@@ -298,7 +298,7 @@ public class StockfishTest {
         bindFileToLineReaderWhenWriting("stockfish/outputs/goDepth10EndGame" +
                         ".txt",
                 "go depth 10");
-        assertNull(this.subject.findBestMove(new EvaluationParameters().setDepth(10)));
+        assertNull(this.subject.findBestMove(EvaluationParameters.builder().depth(10).build()));
     }
 
     @Test
@@ -312,7 +312,7 @@ public class StockfishTest {
                 "/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
         assertEquals(
                 new ChessEngineEvaluation(ChessEngineEvaluationType.CENTIPAWNS, 105),
-                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
+                this.subject.getPositionEvaluation(EvaluationParameters.builder().depth(10).build())
         );
     }
 
@@ -325,7 +325,7 @@ public class StockfishTest {
                 "/1ppppppp/8/8/2B1P3/p4Q2/PPPP1PPP/RNB1K1NR w KQkq - 0 4"));
         assertEquals(
                 new ChessEngineEvaluation(ChessEngineEvaluationType.MATE, 1),
-                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
+                this.subject.getPositionEvaluation(EvaluationParameters.builder().depth(10).build())
         );
     }
 
@@ -339,7 +339,7 @@ public class StockfishTest {
                 "/1ppppppp/8/8/2B1P3/p4Q2/PPPP1PPP/RNB1K1NR b KQkq - 0 4"));
         assertEquals(
                 new ChessEngineEvaluation(ChessEngineEvaluationType.MATE, -1),
-                this.subject.getPositionEvaluation(new EvaluationParameters().setDepth(10))
+                this.subject.getPositionEvaluation(EvaluationParameters.builder().depth(10).build())
         );
     }
 

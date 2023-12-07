@@ -35,10 +35,10 @@ public class Main {
         // a specific square
         System.out.println(stockfish.getPossibleMoves("a2"));
         // This will show the best move from current position
-        EvaluationParameters ep = new EvaluationParameters().setDepth(10);
+        EvaluationParameters ep = EvaluationParameters.builder().depth(10).build();
         System.out.println(stockfish.findBestMove(ep));
         // This will analyze current position
-        EvaluationParameters ep2 = new EvaluationParameters().setDepth(10);
+        EvaluationParameters ep2 = EvaluationParameters.builder().depth(10).build();
         System.out.println(stockfish.getPositionEvaluation(ep2));
     }
 }

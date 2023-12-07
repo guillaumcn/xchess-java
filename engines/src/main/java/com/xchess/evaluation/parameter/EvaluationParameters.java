@@ -1,12 +1,18 @@
 package com.xchess.evaluation.parameter;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-/**
- * Parameters for a Stockfish evaluation of type "go ..."
- */
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EvaluationParameters {
     private List<String> searchMoves;
     private Integer wtime;
@@ -20,120 +26,9 @@ public class EvaluationParameters {
     private Integer movetime;
 
     /**
-     * Restrict search to these moves only
-     *
-     * @param searchMoves List of moves
-     * @return the parameter object
-     */
-    public EvaluationParameters setSearchMoves(List<String> searchMoves) {
-        this.searchMoves = searchMoves;
-        return this;
-    }
-
-    /**
-     * White has x ms left on the clock
-     *
-     * @param wtime the time left in ms
-     * @return the parameter object
-     */
-    public EvaluationParameters setWtime(Integer wtime) {
-        this.wtime = wtime;
-        return this;
-    }
-
-    /**
-     * Black has x ms left on the clock
-     *
-     * @param btime the time left in ms
-     * @return the parameter object
-     */
-    public EvaluationParameters setBtime(Integer btime) {
-        this.btime = btime;
-        return this;
-    }
-
-    /**
-     * White increment per move in ms if x > 0
-     *
-     * @param winc the increment in ms
-     * @return the parameter object
-     */
-    public EvaluationParameters setWinc(Integer winc) {
-        this.winc = winc;
-        return this;
-    }
-
-    /**
-     * Black increment per move in ms if x > 0
-     *
-     * @param binc the increment in ms
-     * @return the parameter object
-     */
-    public EvaluationParameters setBinc(Integer binc) {
-        this.binc = binc;
-        return this;
-    }
-
-    /**
-     * There are x moves to the next time control
-     *
-     * @param movestogo number of moves
-     * @return the parameter object
-     */
-    public EvaluationParameters setMovestogo(Integer movestogo) {
-        this.movestogo = movestogo;
-        return this;
-    }
-
-    /**
-     * Search x plies only
-     *
-     * @param depth the number of piles
-     * @return the parameter object
-     */
-    public EvaluationParameters setDepth(Integer depth) {
-        this.depth = depth;
-        return this;
-    }
-
-    /**
-     * Search x nodes only
-     *
-     * @param nodes The number of nodes
-     * @return the parameter object
-     */
-    public EvaluationParameters setNodes(Integer nodes) {
-        this.nodes = nodes;
-        return this;
-    }
-
-    /**
-     * Search for a mate in x moves
-     *
-     * @param mate the number of moves
-     * @return the parameter object
-     */
-    public EvaluationParameters setMate(Integer mate) {
-        this.mate = mate;
-        return this;
-    }
-
-    /**
-     * Search exactly x ms
-     *
-     * @param movetime the time in ms to search. Should be lower than timeout
-     *                 config of stockfish engine integration
-     * @return the parameter object
-     */
-    public EvaluationParameters setMovetime(Integer movetime) {
-        this.movetime = movetime;
-        return this;
-    }
-
-    /**
      * @return The command to write to Stockfish engine
      */
-    public String build() {
+    public String getCommand() {
         StringJoiner joiner = new StringJoiner(" ");
         joiner.add("go");
         if (!Objects.isNull(searchMoves) && !searchMoves.isEmpty()) {
