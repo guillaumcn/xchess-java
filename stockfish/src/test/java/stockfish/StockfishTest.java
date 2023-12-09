@@ -246,8 +246,9 @@ public class StockfishTest {
                 Collections.singletonList("a7a5"),
                 Collections.emptyList()
         ));
+        List<String> moveList = Arrays.asList("a2a4", "a7a5", "b2b4");
         assertThrows(IllegalArgumentException.class,
-                () -> this.subject.move(Arrays.asList("a2a4", "a7a5", "b2b4")));
+                () -> this.subject.move(moveList));
 
         verify(this.process, times(1)).writeCommand("position fen " +
                 "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 " +
@@ -279,8 +280,9 @@ public class StockfishTest {
     @Test
     public void shouldThrowExceptionIfOneOnTheMovesHasInvalidSyntax() throws IOException, TimeoutException {
         initStockfishInstance(true);
+        List<String> moveList = Arrays.asList("a2a4", "a8a9");
         assertThrows(IllegalArgumentException.class,
-                () -> this.subject.move(Arrays.asList("a2a4", "a8a9")));
+                () -> this.subject.move(moveList));
     }
 
     @Test

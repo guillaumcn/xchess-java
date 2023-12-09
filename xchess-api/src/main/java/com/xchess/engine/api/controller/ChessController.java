@@ -1,6 +1,7 @@
 package com.xchess.engine.api.controller;
 
 import com.xchess.ChessEngine;
+import com.xchess.engine.api.exceptions.ChessEngineWorkerExecutionException;
 import com.xchess.engine.api.pool.PoolWrapper;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.parameter.EvaluationParameters;
@@ -41,7 +42,7 @@ public class ChessController {
                     return engineWorker.getPossibleMoves(square);
                 }
             } catch (IOException | TimeoutException e) {
-                throw new RuntimeException(e);
+                throw new ChessEngineWorkerExecutionException(e);
             }
 
         });
@@ -58,7 +59,7 @@ public class ChessController {
                                 .build();
                 return engineWorker.findBestMove(evaluationParameters);
             } catch (IOException | TimeoutException e) {
-                throw new RuntimeException(e);
+                throw new ChessEngineWorkerExecutionException(e);
             }
 
         });
@@ -75,7 +76,7 @@ public class ChessController {
                                 .build();
                 return engineWorker.getPositionEvaluation(evaluationParameters);
             } catch (IOException | TimeoutException e) {
-                throw new RuntimeException(e);
+                throw new ChessEngineWorkerExecutionException(e);
             }
 
         });

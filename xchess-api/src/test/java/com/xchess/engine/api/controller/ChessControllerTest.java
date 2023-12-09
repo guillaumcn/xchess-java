@@ -1,6 +1,7 @@
 package com.xchess.engine.api.controller;
 
 import com.xchess.ChessEngine;
+import com.xchess.engine.api.exceptions.ChessEngineWorkerExecutionException;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.evaluation.parameter.EvaluationParameters;
@@ -71,7 +72,7 @@ public class ChessControllerTest {
     @Test
     public void shouldThrowExceptionWhenGetPossibleMoves() throws Exception {
         doThrow(IOException.class).when(this.engine).getPossibleMoves();
-        assertThrows(RuntimeException.class,
+        assertThrows(ChessEngineWorkerExecutionException.class,
                 () -> this.testSubject.getPossibleMoves(null, null));
     }
 
@@ -102,7 +103,7 @@ public class ChessControllerTest {
     @Test
     public void shouldThrowExceptionWhenFindBestMove() throws Exception {
         doThrow(IOException.class).when(this.engine).findBestMove(any(EvaluationParameters.class));
-        assertThrows(RuntimeException.class,
+        assertThrows(ChessEngineWorkerExecutionException.class,
                 () -> this.testSubject.findBestMove(null));
     }
 
@@ -137,7 +138,7 @@ public class ChessControllerTest {
     @Test
     public void shouldThrowExceptionWhenEvaluatingPosition() throws Exception {
         doThrow(IOException.class).when(this.engine).getPositionEvaluation(any(EvaluationParameters.class));
-        assertThrows(RuntimeException.class,
+        assertThrows(ChessEngineWorkerExecutionException.class,
                 () -> this.testSubject.getPositionEvaluation(null));
     }
 }

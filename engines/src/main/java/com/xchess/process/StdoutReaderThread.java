@@ -1,5 +1,7 @@
 package com.xchess.process;
 
+import com.xchess.exceptions.StdoutReaderThreadException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -82,7 +84,7 @@ public class StdoutReaderThread extends Thread {
             }
         } catch (IOException e) {
             exceptionThrown = e;
-            throw new RuntimeException(e);
+            throw new StdoutReaderThreadException(e);
         } finally {
             keepRunning = false;
         }
