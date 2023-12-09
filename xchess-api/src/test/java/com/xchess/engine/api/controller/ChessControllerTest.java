@@ -5,8 +5,8 @@ import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.evaluation.parameter.EvaluationParameters;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -20,7 +20,7 @@ public class ChessControllerTest {
     private ChessController testSubject;
     private ChessEngine engine;
 
-    @BeforeEach
+    @Before
     public void setUp() throws Exception {
         GenericObjectPool<ChessEngine> pool = mock(GenericObjectPool.class);
         this.engine = mock(ChessEngine.class);
