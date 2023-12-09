@@ -1,14 +1,19 @@
 package com.xchess.engine.api.controller;
 
 import com.xchess.ChessEngine;
+import com.xchess.evaluation.ChessEngineEvaluation;
+import com.xchess.evaluation.ChessEngineEvaluationType;
+import com.xchess.evaluation.parameter.EvaluationParameters;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class ChessControllerTest {
@@ -61,5 +66,78 @@ public class ChessControllerTest {
         doReturn(expected).when(this.engine).getPossibleMoves(eq("a2"));
         List<String> result = this.testSubject.getPossibleMoves(null, "a2");
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenGetPossibleMoves() throws Exception {
+        doThrow(IOException.class).when(this.engine).getPossibleMoves();
+        assertThrows(RuntimeException.class,
+                () -> this.testSubject.getPossibleMoves(null, null));
+    }
+
+    @Test
+    public void shouldMoveToFenPositionWhenFindingBestMove() throws Exception {
+        String fen = "rnbqkbnr/ppp1pppp/8/3p4/4P3/8" +
+                "/PPPP1PPP/RNBQKBNR w KQkq d6 0 2";
+        this.testSubject.findBestMove(fen);
+
+        verify(this.engine, times(1)).moveToFenPosition(fen, true);
+    }
+
+    @Test
+    public void shouldMoveToStartPositionWhenFindingBestMove() throws Exception {
+        this.testSubject.findBestMove(null);
+
+        verify(this.engine, times(1)).moveToStartPosition(true);
+    }
+
+    @Test
+    public void shouldFindBestMove() throws Exception {
+        String expected = "a2a4";
+        doReturn(expected).when(this.engine).findBestMove(any(EvaluationParameters.class));
+        String result = this.testSubject.findBestMove(null);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenFindBestMove() throws Exception {
+        doThrow(IOException.class).when(this.engine).findBestMove(any(EvaluationParameters.class));
+        assertThrows(RuntimeException.class,
+                () -> this.testSubject.findBestMove(null));
+    }
+
+    @Test
+    public void shouldMoveToFenPositionWhenEvaluatingPosition() throws Exception {
+        String fen = "rnbqkbnr/ppp1pppp/8/3p4/4P3/8" +
+                "/PPPP1PPP/RNBQKBNR w KQkq d6 0 2";
+        this.testSubject.getPositionEvaluation(fen);
+
+        verify(this.engine, times(1)).moveToFenPosition(fen, true);
+    }
+
+    @Test
+    public void shouldMoveToStartPositionWhenEvaluatingPosition() throws Exception {
+        this.testSubject.getPositionEvaluation(null);
+
+        verify(this.engine, times(1)).moveToStartPosition(true);
+    }
+
+    @Test
+    public void shouldGetPositionEvaluation() throws Exception {
+        ChessEngineEvaluation expected = ChessEngineEvaluation.builder()
+                .type(ChessEngineEvaluationType.CENTIPAWNS)
+                .value(12)
+                .build();
+        doReturn(expected).when(this.engine).getPositionEvaluation(any(EvaluationParameters.class));
+        ChessEngineEvaluation result =
+                this.testSubject.getPositionEvaluation(null);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenEvaluatingPosition() throws Exception {
+        doThrow(IOException.class).when(this.engine).getPositionEvaluation(any(EvaluationParameters.class));
+        assertThrows(RuntimeException.class,
+                () -> this.testSubject.getPositionEvaluation(null));
     }
 }
