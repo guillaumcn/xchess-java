@@ -64,7 +64,7 @@ public class ChessControllerTest {
     @Test
     public void shouldGetPossibleMovesForSquare() throws Exception {
         List<String> expected = Collections.singletonList("a2a4");
-        doReturn(expected).when(this.engine).getPossibleMoves(eq("a2"));
+        doReturn(expected).when(this.engine).getPossibleMoves("a2");
         List<String> result = this.testSubject.getPossibleMoves(null, "a2");
         assertEquals(expected, result);
     }
