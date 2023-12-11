@@ -1,9 +1,6 @@
 package com.xchess.evaluation.parameter;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +8,7 @@ import java.util.StringJoiner;
 
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvaluationParameters {
@@ -28,7 +26,7 @@ public class EvaluationParameters {
     /**
      * @return The command to write to Stockfish engine
      */
-    public String getCommand() {
+    public String buildCommand() {
         StringJoiner joiner = new StringJoiner(" ");
         joiner.add("go");
         if (!Objects.isNull(searchMoves) && !searchMoves.isEmpty()) {

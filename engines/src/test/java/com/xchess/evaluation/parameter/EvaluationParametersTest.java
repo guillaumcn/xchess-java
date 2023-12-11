@@ -23,7 +23,7 @@ public class EvaluationParametersTest {
                 .build();
         assertEquals("go searchmoves a2a4 e2e4 wtime 3 btime 3 winc 2 binc 2 " +
                         "movestogo 2 depth 4 nodes 4 mate 2 movetime 3",
-                ep.getCommand());
+                ep.buildCommand());
     }
 
     @Test
@@ -31,6 +31,6 @@ public class EvaluationParametersTest {
         EvaluationParameters ep = EvaluationParameters.builder()
                 .binc(2)
                 .build();
-        assertEquals("go binc 2", ep.getCommand());
+        assertEquals("go binc 2", ep.buildCommand());
     }
 }

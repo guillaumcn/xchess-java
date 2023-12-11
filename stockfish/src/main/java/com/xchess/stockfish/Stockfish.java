@@ -173,7 +173,7 @@ public class Stockfish implements ChessEngine {
     }
 
     public synchronized String findBestMove(EvaluationParameters options) throws IOException, TimeoutException {
-        this.process.writeCommand(options.getCommand());
+        this.process.writeCommand(options.buildCommand());
 
         return this.getBestMoveFromOutput();
     }
@@ -183,7 +183,7 @@ public class Stockfish implements ChessEngine {
         String currentFen = this.getFenPosition();
         int multiplier = currentFen.contains("w") ? 1 : -1;
 
-        this.process.writeCommand(options.getCommand());
+        this.process.writeCommand(options.buildCommand());
         List<String> evaluationLines = this.getEvaluationLines();
         Collections.reverse(evaluationLines);
 

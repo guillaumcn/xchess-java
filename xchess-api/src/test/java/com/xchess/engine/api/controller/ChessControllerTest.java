@@ -80,14 +80,16 @@ public class ChessControllerTest {
     public void shouldMoveToFenPositionWhenFindingBestMove() throws Exception {
         String fen = "rnbqkbnr/ppp1pppp/8/3p4/4P3/8" +
                 "/PPPP1PPP/RNBQKBNR w KQkq d6 0 2";
-        this.testSubject.findBestMove(fen);
+        this.testSubject.findBestMove(fen,
+                EvaluationParameters.builder().depth(10).build());
 
         verify(this.engine, times(1)).moveToFenPosition(fen, true);
     }
 
     @Test
     public void shouldMoveToStartPositionWhenFindingBestMove() throws Exception {
-        this.testSubject.findBestMove(null);
+        this.testSubject.findBestMove(null,
+                EvaluationParameters.builder().depth(10).build());
 
         verify(this.engine, times(1)).moveToStartPosition(true);
     }
@@ -96,7 +98,8 @@ public class ChessControllerTest {
     public void shouldFindBestMove() throws Exception {
         String expected = "a2a4";
         doReturn(expected).when(this.engine).findBestMove(any(EvaluationParameters.class));
-        String result = this.testSubject.findBestMove(null);
+        String result = this.testSubject.findBestMove(null,
+                EvaluationParameters.builder().depth(10).build());
         assertEquals(expected, result);
     }
 
@@ -104,21 +107,24 @@ public class ChessControllerTest {
     public void shouldThrowExceptionWhenFindBestMove() throws Exception {
         doThrow(IOException.class).when(this.engine).findBestMove(any(EvaluationParameters.class));
         assertThrows(ChessEngineWorkerExecutionException.class,
-                () -> this.testSubject.findBestMove(null));
+                () -> this.testSubject.findBestMove(null,
+                        EvaluationParameters.builder().depth(10).build()));
     }
 
     @Test
     public void shouldMoveToFenPositionWhenEvaluatingPosition() throws Exception {
         String fen = "rnbqkbnr/ppp1pppp/8/3p4/4P3/8" +
                 "/PPPP1PPP/RNBQKBNR w KQkq d6 0 2";
-        this.testSubject.getPositionEvaluation(fen);
+        this.testSubject.getPositionEvaluation(fen,
+                EvaluationParameters.builder().depth(10).build());
 
         verify(this.engine, times(1)).moveToFenPosition(fen, true);
     }
 
     @Test
     public void shouldMoveToStartPositionWhenEvaluatingPosition() throws Exception {
-        this.testSubject.getPositionEvaluation(null);
+        this.testSubject.getPositionEvaluation(null,
+                EvaluationParameters.builder().depth(10).build());
 
         verify(this.engine, times(1)).moveToStartPosition(true);
     }
@@ -131,7 +137,8 @@ public class ChessControllerTest {
                 .build();
         doReturn(expected).when(this.engine).getPositionEvaluation(any(EvaluationParameters.class));
         ChessEngineEvaluation result =
-                this.testSubject.getPositionEvaluation(null);
+                this.testSubject.getPositionEvaluation(null,
+                        EvaluationParameters.builder().depth(10).build());
         assertEquals(expected, result);
     }
 
@@ -139,6 +146,7 @@ public class ChessControllerTest {
     public void shouldThrowExceptionWhenEvaluatingPosition() throws Exception {
         doThrow(IOException.class).when(this.engine).getPositionEvaluation(any(EvaluationParameters.class));
         assertThrows(ChessEngineWorkerExecutionException.class,
-                () -> this.testSubject.getPositionEvaluation(null));
+                () -> this.testSubject.getPositionEvaluation(null,
+                        EvaluationParameters.builder().depth(10).build()));
     }
 }

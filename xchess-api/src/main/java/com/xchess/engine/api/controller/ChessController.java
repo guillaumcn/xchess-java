@@ -49,14 +49,11 @@ public class ChessController {
     }
 
     @GetMapping(value = "/bestMove")
-    public String findBestMove(@RequestParam(required = false) String fen) throws Exception {
+    public String findBestMove(@RequestParam(required = false) String fen,
+                               EvaluationParameters evaluationParameters) throws Exception {
         return this.poolWrapper.queueAction(engineWorker -> {
             try {
                 moveToFenPositionIfDefined(engineWorker, fen);
-                EvaluationParameters evaluationParameters =
-                        EvaluationParameters.builder()
-                                .depth(10)
-                                .build();
                 return engineWorker.findBestMove(evaluationParameters);
             } catch (IOException | TimeoutException e) {
                 throw new ChessEngineWorkerExecutionException(e);
@@ -66,14 +63,10 @@ public class ChessController {
     }
 
     @GetMapping(value = "/positionEvaluation")
-    public ChessEngineEvaluation getPositionEvaluation(@RequestParam(required = false) String fen) throws Exception {
+    public ChessEngineEvaluation getPositionEvaluation(@RequestParam(required = false) String fen, EvaluationParameters evaluationParameters) throws Exception {
         return this.poolWrapper.queueAction(engineWorker -> {
             try {
                 moveToFenPositionIfDefined(engineWorker, fen);
-                EvaluationParameters evaluationParameters =
-                        EvaluationParameters.builder()
-                                .depth(10)
-                                .build();
                 return engineWorker.getPositionEvaluation(evaluationParameters);
             } catch (IOException | TimeoutException e) {
                 throw new ChessEngineWorkerExecutionException(e);
