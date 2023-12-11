@@ -1,9 +1,9 @@
 package com.xchess.engine.api.pool.worker;
 
 import com.xchess.ChessEngine;
+import com.xchess.process.ProcessWrapper;
 import com.xchess.stockfish.Stockfish;
 import com.xchess.stockfish.config.StockfishConfig;
-import com.xchess.process.ProcessWrapper;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.DestroyMode;
 import org.apache.commons.pool2.PooledObject;
