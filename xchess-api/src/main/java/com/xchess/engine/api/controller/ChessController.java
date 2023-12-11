@@ -25,12 +25,12 @@ public class ChessController {
         this.poolWrapper = poolWrapper;
     }
 
-    @GetMapping(value = "/getEngineVersion")
+    @GetMapping(value = "/engineVersion")
     public Float getEngineVersion() throws Exception {
         return this.poolWrapper.queueAction(ChessEngine::getEngineVersion);
     }
 
-    @GetMapping(value = "/getPossibleMoves")
+    @GetMapping(value = "/possibleMoves")
     public List<String> getPossibleMoves(@RequestParam(required = false) String fen,
                                          @RequestParam(required = false) String square) throws Exception {
         return this.poolWrapper.queueAction(engineWorker -> {
@@ -48,7 +48,7 @@ public class ChessController {
         });
     }
 
-    @GetMapping(value = "/findBestMove")
+    @GetMapping(value = "/bestMove")
     public String findBestMove(@RequestParam(required = false) String fen) throws Exception {
         return this.poolWrapper.queueAction(engineWorker -> {
             try {
@@ -65,7 +65,7 @@ public class ChessController {
         });
     }
 
-    @GetMapping(value = "/getPositionEvaluation")
+    @GetMapping(value = "/positionEvaluation")
     public ChessEngineEvaluation getPositionEvaluation(@RequestParam(required = false) String fen) throws Exception {
         return this.poolWrapper.queueAction(engineWorker -> {
             try {
