@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.guillaumcn</groupId>
     <artifactId>java-chess-modules</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <name>Java modules for chess</name>
     <description>Provides java modules for chess including Stockfish engine
         implementation
