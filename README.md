@@ -9,7 +9,7 @@ Java Chess Stockfish provides a java integration for the Stockfish chess engine.
 <dependency>
     <groupId>io.github.guillaumcn</groupId>
     <artifactId>chess-stockfish</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 
 ```
@@ -60,7 +60,8 @@ public class Main {
 
 * Version 1.0.0 (2015-12-02) - First release
 * Version 1.0.1 (2015-12-05) - Make Stockfish integration thread safe
-* Version 1.0.2 (2015-12-07) - use lombok for project
+* Version 1.0.2 (2015-12-07) - Use lombok for project
+* Version 1.0.3 (2015-12-07) - Fixed build and publication
 
 ## Credits
 
