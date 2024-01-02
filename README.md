@@ -58,10 +58,10 @@ public class Main {
 
 ## History
 
-* Version 1.0.0 (2015-12-02) - First release
-* Version 1.0.1 (2015-12-05) - Make Stockfish integration thread safe
-* Version 1.0.2 (2015-12-07) - Use lombok for project
-* Version 1.0.3 (2015-12-07) - Fixed build and publication
+* Version 1.0.0 (2023-12-02) - First release
+* Version 1.0.1 (2023-12-05) - Make Stockfish integration thread safe
+* Version 1.0.2 (2024-01-03) - Use lombok for project
+* Version 1.0.3 (2024-01-03) - Fixed build and publication
 
 ## Credits
 
@@ -73,7 +73,7 @@ Feel free to add issue if needed a new functionality.
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Chris Kibble
+Copyright (c) 2024 Guillaume Lerda
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
