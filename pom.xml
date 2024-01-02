@@ -8,10 +8,32 @@
     <artifactId>java-chess-modules</artifactId>
     <version>1.0.3</version>
     <name>Java modules for chess</name>
-    <description>Provides java modules for chess including Stockfish engine
-        implementation
-    </description>
+    <description>Provides java modules for chess including Stockfish engine implementation</description>
+    <url>https://github.com/guillaumcn/java-chess-modules</url>
     <packaging>pom</packaging>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Guillaume Lerda</name>
+            <email>lerda.guillaume@gmail.com</email>
+            <organization>Guillaume Lerda</organization>
+            <organizationUrl>https://github.com/guillaumcn/java-chess-modules
+            </organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/guillaumcn/java-chess-modules.git
+        </connection>
+        <developerConnection>
+            scm:git:ssh://github.com:guillaumcn/java-chess-modules.git
+        </developerConnection>
+        <url>https://github.com/guillaumcn/java-chess-modules</url>
+    </scm>
 
     <modules>
         <module>engines</module>
