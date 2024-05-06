@@ -3,6 +3,9 @@ package stockfish;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.evaluation.parameter.EvaluationParameters;
+import com.xchess.exceptions.IllegalMoveException;
+import com.xchess.exceptions.InvalidMoveSyntaxException;
+import com.xchess.exceptions.InvalidSquareSyntaxException;
 import com.xchess.process.ProcessWrapper;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
@@ -117,7 +120,7 @@ public class StockfishTest {
 
     @Test
     public void shouldGetPossibleMovesForSpecificSquare() throws IOException,
-            TimeoutException {
+            TimeoutException, InvalidSquareSyntaxException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
@@ -128,7 +131,7 @@ public class StockfishTest {
     }
 
     @Test
-    public void shouldReturnNoPossibleMovesForSpecificSquare() throws IOException, TimeoutException {
+    public void shouldReturnNoPossibleMovesForSpecificSquare() throws IOException, TimeoutException, InvalidSquareSyntaxException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
@@ -141,13 +144,13 @@ public class StockfishTest {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidSquareSyntaxException.class,
                 () -> this.subject.getPossibleMoves("a9"));
     }
 
     @Test
     public void shouldReturnTrueIfAMoveIsPossible() throws IOException,
-            TimeoutException {
+            TimeoutException, InvalidMoveSyntaxException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
@@ -156,7 +159,7 @@ public class StockfishTest {
 
     @Test
     public void shouldReturnFalseIfAMoveIsNotPossible() throws IOException,
-            TimeoutException {
+            TimeoutException, InvalidMoveSyntaxException {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
@@ -168,7 +171,7 @@ public class StockfishTest {
         initStockfishInstance(true);
         bindFileToLineReaderWhenWriting("stockfish/outputs/possibleMoves.txt",
                 "go perft 1");
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidMoveSyntaxException.class,
                 () -> this.subject.isMovePossible("a9a8"));
     }
 
@@ -206,7 +209,8 @@ public class StockfishTest {
     }
 
     @Test
-    public void shouldMove() throws IOException, TimeoutException {
+    public void shouldMove() throws IOException, TimeoutException,
+            IllegalMoveException, InvalidMoveSyntaxException {
         initStockfishInstance(true);
         this.subject.setSuccessiveFens(Arrays.asList(
                 "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -247,7 +251,7 @@ public class StockfishTest {
                 Collections.emptyList()
         ));
         List<String> moveList = Arrays.asList("a2a4", "a7a5", "b2b4");
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalMoveException.class,
                 () -> this.subject.move(moveList));
 
         verify(this.process, times(1)).writeCommand("position fen " +
@@ -281,7 +285,7 @@ public class StockfishTest {
     public void shouldThrowExceptionIfOneOnTheMovesHasInvalidSyntax() throws IOException, TimeoutException {
         initStockfishInstance(true);
         List<String> moveList = Arrays.asList("a2a4", "a8a9");
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidMoveSyntaxException.class,
                 () -> this.subject.move(moveList));
     }
 

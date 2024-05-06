@@ -4,6 +4,9 @@ import com.xchess.ChessEngine;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.evaluation.parameter.EvaluationParameters;
+import com.xchess.exceptions.IllegalMoveException;
+import com.xchess.exceptions.InvalidMoveSyntaxException;
+import com.xchess.exceptions.InvalidSquareSyntaxException;
 import com.xchess.process.ProcessWrapper;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
@@ -108,19 +111,19 @@ public class Stockfish implements ChessEngine {
     }
 
     public synchronized List<String> getPossibleMoves(String square) throws IOException,
-            TimeoutException {
+            TimeoutException, InvalidSquareSyntaxException {
         String lowerCaseSquare = square.toLowerCase();
         if (!SquareValidator.isSquareSyntaxValid(lowerCaseSquare)) {
-            throw new IllegalArgumentException("Invalid syntax for square " + square);
+            throw new InvalidSquareSyntaxException(square);
         }
         return this.getPossibleMoves().stream().filter(move -> move.startsWith(lowerCaseSquare)).toList();
     }
 
     public synchronized boolean isMovePossible(String move) throws IOException,
-            TimeoutException {
+            TimeoutException, InvalidMoveSyntaxException {
         String lowerCaseMove = move.toLowerCase();
         if (!MoveValidator.isMoveValid(lowerCaseMove)) {
-            throw new IllegalArgumentException("Invalid syntax for move " + move);
+            throw new InvalidMoveSyntaxException(move);
         }
         return getPossibleMoves().contains(lowerCaseMove);
     }
@@ -144,13 +147,13 @@ public class Stockfish implements ChessEngine {
     }
 
     public synchronized void move(List<String> moves) throws IOException,
-            TimeoutException {
+            TimeoutException, InvalidMoveSyntaxException, IllegalMoveException {
         List<String> lowerCasesMoves =
                 moves.stream().map(String::toLowerCase).toList();
         int invalidMoveIndex =
                 lowerCasesMoves.stream().map(MoveValidator::isMoveValid).toList().indexOf(false);
         if (invalidMoveIndex != -1) {
-            throw new IllegalArgumentException("Invalid syntax for move " + moves.get(invalidMoveIndex));
+            throw new InvalidMoveSyntaxException(moves.get(invalidMoveIndex));
         }
         String startingPosition = this.getFenPosition();
         for (String move :
@@ -161,8 +164,7 @@ public class Stockfish implements ChessEngine {
                     this.waitUntilReady();
                 } else {
                     this.moveToFenPosition(startingPosition, false);
-                    throw new IllegalArgumentException("Illegal move " + move +
-                            " from position " + this.getFenPosition());
+                    throw new IllegalMoveException(move, this.getFenPosition());
                 }
             } catch (TimeoutException e) {
                 this.moveToFenPosition(startingPosition, false);

@@ -2,6 +2,9 @@ package com.xchess;
 
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.parameter.EvaluationParameters;
+import com.xchess.exceptions.IllegalMoveException;
+import com.xchess.exceptions.InvalidMoveSyntaxException;
+import com.xchess.exceptions.InvalidSquareSyntaxException;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,7 +53,7 @@ public interface ChessEngine {
      * @throws TimeoutException In case of timeout reached when reading
      */
     List<String> getPossibleMoves(String square) throws IOException,
-            TimeoutException;
+            TimeoutException, InvalidSquareSyntaxException;
 
     /**
      * Check if a move is possible from current position. See
@@ -64,7 +67,7 @@ public interface ChessEngine {
      * @throws TimeoutException In case of timeout reached when reading
      */
     boolean isMovePossible(String move) throws IOException,
-            TimeoutException;
+            TimeoutException, InvalidMoveSyntaxException;
 
     /**
      * Move from current position. See
@@ -76,7 +79,8 @@ public interface ChessEngine {
      *                          engine process
      * @throws TimeoutException In case of timeout reached when reading
      */
-    void move(List<String> moves) throws IOException, TimeoutException;
+    void move(List<String> moves) throws IOException, TimeoutException,
+            InvalidMoveSyntaxException, IllegalMoveException;
 
     /**
      * Move to the start position
