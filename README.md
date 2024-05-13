@@ -23,7 +23,10 @@ public class Main {
 
     public static void main(String[] args) throws IOException,
             TimeoutException {
+        // Linux Mac
         ProcessWrapper pw = new ProcessWrapper("path/to/stockfish/engine");
+        // Windows
+        ProcessWrapper pw = new ProcessWrapper("cmd", "path\\to\\stockfish\\engine.exe");
         StockfishConfig sc = new StockfishConfig().setTimeoutInMs(5000);
         Stockfish stockfish = new Stockfish(pw, sc);
 
