@@ -3,6 +3,7 @@ package com.xchess;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.parameter.EvaluationParameters;
 import com.xchess.exceptions.IllegalMoveException;
+import com.xchess.exceptions.InvalidFenPositionException;
 import com.xchess.exceptions.InvalidMoveSyntaxException;
 import com.xchess.exceptions.InvalidSquareSyntaxException;
 
@@ -75,12 +76,18 @@ public interface ChessEngine {
      * {@link #moveToStartPosition(boolean)} to change current position
      *
      * @param moves The moves to with format "a1a2" or "a1a2r"
-     * @throws IOException      If any error occurs communicating with
-     *                          engine process
-     * @throws TimeoutException In case of timeout reached when reading
+     * @throws IOException                 If any error occurs communicating
+     *                                     with
+     *                                     engine process
+     * @throws TimeoutException            In case of timeout reached when
+     *                                     reading
+     * @throws InvalidMoveSyntaxException  Invalid move syntax
+     * @throws IllegalMoveException        Illegal move
+     * @throws InvalidFenPositionException Invalid fen position when moving
      */
     void move(List<String> moves) throws IOException, TimeoutException,
-            InvalidMoveSyntaxException, IllegalMoveException;
+            InvalidMoveSyntaxException, IllegalMoveException,
+            InvalidFenPositionException;
 
     /**
      * Move to the start position
@@ -98,12 +105,15 @@ public interface ChessEngine {
      *
      * @param fen     the fen position to move to
      * @param newGame true to tell engine to start a new and clear hash table
-     * @throws IOException      If any error occurs communicating with engine
-     *                          process
-     * @throws TimeoutException In case of timeout reached when reading
+     * @throws IOException                 If any error occurs communicating
+     * with engine
+     *                                     process
+     * @throws TimeoutException            In case of timeout reached when
+     * reading
+     * @throws InvalidFenPositionException If given fen position is invalid
      */
     void moveToFenPosition(String fen, boolean newGame) throws IOException,
-            TimeoutException;
+            TimeoutException, InvalidFenPositionException;
 
     /**
      * Find the best move in current position

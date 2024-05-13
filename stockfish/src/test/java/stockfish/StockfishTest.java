@@ -4,6 +4,7 @@ import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.evaluation.parameter.EvaluationParameters;
 import com.xchess.exceptions.IllegalMoveException;
+import com.xchess.exceptions.InvalidFenPositionException;
 import com.xchess.exceptions.InvalidMoveSyntaxException;
 import com.xchess.exceptions.InvalidSquareSyntaxException;
 import com.xchess.process.ProcessWrapper;
@@ -192,7 +193,8 @@ public class StockfishTest {
     }
 
     @Test
-    public void shouldMoveToFenPosition() throws IOException, TimeoutException {
+    public void shouldMoveToFenPosition() throws IOException,
+            TimeoutException, InvalidFenPositionException {
         initStockfishInstance(true);
         String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         this.subject.moveToFenPosition(fen, false);
@@ -200,7 +202,7 @@ public class StockfishTest {
     }
 
     @Test
-    public void shouldMoveToFenPositionWithNewGameCommand() throws IOException, TimeoutException {
+    public void shouldMoveToFenPositionWithNewGameCommand() throws IOException, TimeoutException, InvalidFenPositionException {
         initStockfishInstance(true);
         String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         this.subject.moveToFenPosition(fen, true);
@@ -210,7 +212,8 @@ public class StockfishTest {
 
     @Test
     public void shouldMove() throws IOException, TimeoutException,
-            IllegalMoveException, InvalidMoveSyntaxException {
+            IllegalMoveException, InvalidMoveSyntaxException,
+            InvalidFenPositionException {
         initStockfishInstance(true);
         this.subject.setSuccessiveFens(Arrays.asList(
                 "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",

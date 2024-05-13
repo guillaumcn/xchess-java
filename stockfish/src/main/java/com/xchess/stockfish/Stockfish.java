@@ -4,9 +4,7 @@ import com.xchess.ChessEngine;
 import com.xchess.evaluation.ChessEngineEvaluation;
 import com.xchess.evaluation.ChessEngineEvaluationType;
 import com.xchess.evaluation.parameter.EvaluationParameters;
-import com.xchess.exceptions.IllegalMoveException;
-import com.xchess.exceptions.InvalidMoveSyntaxException;
-import com.xchess.exceptions.InvalidSquareSyntaxException;
+import com.xchess.exceptions.*;
 import com.xchess.process.ProcessWrapper;
 import com.xchess.stockfish.config.StockfishConfig;
 import com.xchess.stockfish.option.StockfishOptions;
@@ -138,16 +136,21 @@ public class Stockfish implements ChessEngine {
     }
 
     public synchronized void moveToFenPosition(String fen, boolean newGame) throws IOException,
-            TimeoutException {
+            TimeoutException, InvalidFenPositionException {
         if (newGame) {
             this.process.writeCommand("ucinewgame");
         }
         this.process.writeCommand("position fen " + fen);
-        this.waitUntilReady();
+        try {
+            this.waitUntilReady();
+        } catch (ProcessKilledException e) {
+            throw new InvalidFenPositionException(fen);
+        }
     }
 
     public synchronized void move(List<String> moves) throws IOException,
-            TimeoutException, InvalidMoveSyntaxException, IllegalMoveException {
+            TimeoutException, InvalidMoveSyntaxException,
+            IllegalMoveException, InvalidFenPositionException {
         List<String> lowerCasesMoves =
                 moves.stream().map(String::toLowerCase).toList();
         int invalidMoveIndex =

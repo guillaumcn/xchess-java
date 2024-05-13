@@ -1,12 +1,14 @@
 package com.xchess.process;
 
+import com.xchess.exceptions.ProcessKilledException;
 import com.xchess.exceptions.StdoutReaderThreadException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
@@ -14,55 +16,18 @@ import java.util.function.Predicate;
  * A thread reading a java Inputstream until a predicate matches
  */
 public class StdoutReaderThread extends Thread {
-    private boolean keepRunning;
-    private final List<String> resultLines;
+    private final List<String> lines;
     private final BufferedReader stdoutReader;
-    private final Predicate<String> endPredicate;
-    private IOException exceptionThrown;
-    private final int timeoutInMs;
+    private final Process process;
 
     /**
      * @param stdoutReader The buffered reader
-     * @param endPredicate The predicate to match
-     * @param timeoutInMs  The maximum timeout
      */
     public StdoutReaderThread(BufferedReader stdoutReader,
-                              Predicate<String> endPredicate, int timeoutInMs) {
-        this.keepRunning = true;
-        this.resultLines = new ArrayList<>();
+                              Process process) {
+        this.lines = Collections.synchronizedList(new ArrayList<>());
         this.stdoutReader = stdoutReader;
-        this.endPredicate = endPredicate;
-        this.exceptionThrown = null;
-        this.timeoutInMs = timeoutInMs;
-    }
-
-    /**
-     * @return The read lines including the matching line
-     * @throws TimeoutException if timeout is reached
-     * @throws IOException      If any error occurs during communicating with
-     *                          process
-     */
-    public List<String> getLines() throws TimeoutException, IOException {
-        this.start();
-
-        try {
-            this.join(timeoutInMs);
-            if (!Objects.isNull(exceptionThrown)) {
-                throw exceptionThrown;
-            }
-            // Timeout do not stop thread, ensure it will be stopped by
-            // setting keepRunning to false
-            if (this.keepRunning) {
-                keepRunning = false;
-                throw new TimeoutException("Timeout while waiting for " +
-                        "process" +
-                        " to respond");
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        return this.resultLines;
+        this.process = process;
     }
 
     /**
@@ -71,22 +36,55 @@ public class StdoutReaderThread extends Thread {
     @Override
     public void run() {
         super.run();
+        String line;
 
         try {
-            while (keepRunning) {
-                String line = stdoutReader.readLine();
-                if (!Objects.isNull(line) && !line.isEmpty()) {
-                    this.resultLines.add(line);
-                    if (endPredicate.test(line)) {
-                        keepRunning = false;
-                    }
-                }
+            while ((line = stdoutReader.readLine()) != null) {
+                this.lines.add(line);
             }
         } catch (IOException e) {
-            exceptionThrown = e;
             throw new StdoutReaderThreadException(e);
-        } finally {
-            keepRunning = false;
         }
+    }
+
+    public List<String> getLinesUntil(Predicate<String> matchPredicate,
+                                      int timeoutInMs) throws TimeoutException, ProcessKilledException {
+        long start = System.currentTimeMillis();
+        List<String> newLines = new ArrayList<>();
+        List<String> allLines = new ArrayList<>();
+        Optional<String> matchingLine;
+        long now;
+        do {
+            if (!this.process.isAlive()) {
+                throw new ProcessKilledException();
+            }
+            now = System.currentTimeMillis();
+            if (now - start > timeoutInMs) {
+                this.lines.addAll(0, newLines);
+                throw new TimeoutException("Timeout while waiting for " +
+                        "process" +
+                        " to respond");
+            }
+            newLines = getLines();
+            matchingLine =
+                    newLines.stream().filter(matchPredicate).findFirst();
+
+            allLines.addAll(newLines);
+        } while (matchingLine.isEmpty());
+
+        int firstMatchingLineIndex = allLines.indexOf(matchingLine.get());
+        List<String> resultLines = allLines.subList(0,
+                firstMatchingLineIndex + 1);
+        List<String> remainingLines = resultLines.size() == allLines.size() ?
+                new ArrayList<>() :
+                allLines.subList(firstMatchingLineIndex + 1, allLines.size());
+        this.lines.addAll(0, remainingLines);
+        return resultLines;
+    }
+
+    public List<String> getLines() {
+        List<String> result = new ArrayList<>(this.lines);
+        this.lines.clear();
+        return result;
     }
 }

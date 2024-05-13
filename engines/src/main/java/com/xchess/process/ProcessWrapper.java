@@ -1,5 +1,7 @@
 package com.xchess.process;
 
+import com.xchess.exceptions.ProcessKilledException;
+
 import java.io.*;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -16,6 +18,7 @@ public class ProcessWrapper {
     private Process process;
     private BufferedWriter writer;
     private BufferedReader stdoutReader;
+    private StdoutReaderThread stdoutReaderThread;
 
     /**
      * @param command The process commands
@@ -62,8 +65,12 @@ public class ProcessWrapper {
 
         this.writer =
                 new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
+
         this.stdoutReader =
                 new BufferedReader(new InputStreamReader(this.process.getInputStream()));
+        this.stdoutReaderThread = new StdoutReaderThread(this.stdoutReader,
+                this.process);
+        this.stdoutReaderThread.start();
     }
 
     /**
@@ -83,12 +90,13 @@ public class ProcessWrapper {
      * @param responsePattern Awaited response pattern
      * @param timeoutInMs     Maximum timeout for reading
      * @return A list of read messages including the pattern matching message
-     * @throws TimeoutException if timeout is reached
-     * @throws IOException      If any error occurs during communicating with
-     *                          process
+     * @throws TimeoutException       if timeout is reached
+     * @throws ProcessKilledException If any error occurs during
+     *                                communicating with
+     *                                process
      */
     public List<String> readLinesUntil(Pattern responsePattern,
-                                       int timeoutInMs) throws TimeoutException, IOException {
+                                       int timeoutInMs) throws TimeoutException, ProcessKilledException {
         return readLinesUntil(line -> {
             Matcher matcher = responsePattern.matcher(line);
             return matcher.matches();
@@ -101,12 +109,13 @@ public class ProcessWrapper {
      * @param expectedResponse Awaited response
      * @param timeoutInMs      Maximum timeout for reading
      * @return A list of read messages including the string matching message
-     * @throws TimeoutException if timeout is reached
-     * @throws IOException      If any error occurs during communicating with
-     *                          process
+     * @throws TimeoutException       if timeout is reached
+     * @throws ProcessKilledException If any error occurs during
+     *                                communicating with
+     *                                process
      */
     public List<String> readLinesUntil(String expectedResponse,
-                                       int timeoutInMs) throws TimeoutException, IOException {
+                                       int timeoutInMs) throws TimeoutException, ProcessKilledException {
         return readLinesUntil(line -> line.equals(expectedResponse),
                 timeoutInMs);
     }
@@ -117,21 +126,19 @@ public class ProcessWrapper {
      * @param matchPredicate Awaited predicate
      * @param timeoutInMs    Maximum timeout for reading
      * @return A list of read messages including the matching message
-     * @throws TimeoutException if timeout is reached
-     * @throws IOException      If any error occurs during communicating with
-     *                          process
+     * @throws TimeoutException       if timeout is reached
+     * @throws ProcessKilledException If any error occurs during
+     *                                communicating with
+     *                                process
      */
     private synchronized List<String> readLinesUntil(Predicate<String> matchPredicate,
-                                                     int timeoutInMs) throws TimeoutException, IOException {
+                                                     int timeoutInMs) throws TimeoutException, ProcessKilledException {
         if (timeoutInMs <= 0) {
             throw new IllegalArgumentException("Read timeout should be " +
                     "greater than 0");
         }
 
-        StdoutReaderThread stdoutReaderThread =
-                new StdoutReaderThread(this.stdoutReader,
-                        matchPredicate, timeoutInMs);
-        return stdoutReaderThread.getLines();
+        return stdoutReaderThread.getLinesUntil(matchPredicate, timeoutInMs);
     }
 
     /**
