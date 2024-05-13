@@ -20,6 +20,7 @@ public class ProcessWrapperTest {
     private ProcessWrapper subject;
     private Process process;
     private BufferedReader stdoutReader;
+    private StdoutReaderThread stdoutReaderThread;
     private BufferedWriter writer;
 
     @Before
@@ -30,7 +31,10 @@ public class ProcessWrapperTest {
         this.subject.setProcess(this.process);
 
         this.stdoutReader = mock(BufferedReader.class);
-        this.subject.setStdoutReader(this.stdoutReader);
+        this.subject.setStdoutReader(stdoutReader);
+        this.stdoutReaderThread =
+                new StdoutReaderThread(stdoutReader, process);
+        this.subject.setStdoutReaderThread(stdoutReaderThread);
 
         this.writer = mock(BufferedWriter.class);
         this.subject.setWriter(this.writer);
@@ -55,6 +59,8 @@ public class ProcessWrapperTest {
     public void shouldReturnInputMessagesListWhenReadUntilPattern() throws IOException, TimeoutException {
         String breakMessage = "STOP";
         List<String> expected = prepareLinesRead(breakMessage);
+        stdoutReaderThread.start();
+        when(this.process.isAlive()).thenReturn(true);
         assertEquals(expected, this.subject.readLinesUntil(Pattern.compile(
                 "^" + breakMessage + "$"), 5000));
     }
@@ -63,12 +69,15 @@ public class ProcessWrapperTest {
     public void shouldReturnInputMessagesListWhenReadUntilString() throws IOException, TimeoutException {
         String breakMessage = "STOP";
         List<String> expected = prepareLinesRead(breakMessage);
+        stdoutReaderThread.start();
+        when(this.process.isAlive()).thenReturn(true);
         assertEquals(expected, this.subject.readLinesUntil(breakMessage, 5000));
     }
 
     @Test
     public void shouldThrowExceptionWhenReadReachesTimeout() {
         String breakMessage = "STOP";
+        when(this.process.isAlive()).thenReturn(true);
         assertThrows(TimeoutException.class,
                 () -> this.subject.readLinesUntil(breakMessage, 1));
     }
@@ -103,10 +112,14 @@ public class ProcessWrapperTest {
             String response;
             if (readCount.get() < 4) {
                 response = "READ " + readCount.getAndIncrement();
-            } else {
+                expected.add(response);
+            } else if (readCount.get() == 4) {
                 response = breakMessage;
+                readCount.getAndIncrement();
+                expected.add(response);
+            } else {
+                response = "";
             }
-            expected.add(response);
             return response;
         });
         return expected;

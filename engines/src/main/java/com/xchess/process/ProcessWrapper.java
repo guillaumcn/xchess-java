@@ -48,10 +48,19 @@ public class ProcessWrapper {
     /**
      * Used for test purposes
      *
-     * @param stdoutReader The process stdout reader
+     * @param stdoutReaderThread The process stdout reader thread
      */
-    public void setStdoutReader(BufferedReader stdoutReader) {
-        this.stdoutReader = stdoutReader;
+    public void setStdoutReaderThread(StdoutReaderThread stdoutReaderThread) {
+        this.stdoutReaderThread = stdoutReaderThread;
+    }
+
+    /**
+     * Used for test purposes
+     *
+     * @param bufferedReader The process stdout reader
+     */
+    public void setStdoutReader(BufferedReader bufferedReader) {
+        this.stdoutReader = bufferedReader;
     }
 
     /**

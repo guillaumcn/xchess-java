@@ -40,7 +40,9 @@ public class StdoutReaderThread extends Thread {
 
         try {
             while ((line = stdoutReader.readLine()) != null) {
-                this.lines.add(line);
+                if (!line.isEmpty()) {
+                    this.lines.add(line);
+                }
             }
         } catch (IOException e) {
             throw new StdoutReaderThreadException(e);
@@ -73,11 +75,12 @@ public class StdoutReaderThread extends Thread {
         } while (matchingLine.isEmpty());
 
         int firstMatchingLineIndex = allLines.indexOf(matchingLine.get());
-        List<String> resultLines = allLines.subList(0,
-                firstMatchingLineIndex + 1);
+        List<String> resultLines = new ArrayList<>(allLines.subList(0,
+                firstMatchingLineIndex + 1));
         List<String> remainingLines = resultLines.size() == allLines.size() ?
                 new ArrayList<>() :
-                allLines.subList(firstMatchingLineIndex + 1, allLines.size());
+                new ArrayList<>(allLines.subList(firstMatchingLineIndex + 1,
+                        allLines.size()));
         this.lines.addAll(0, remainingLines);
         return resultLines;
     }
