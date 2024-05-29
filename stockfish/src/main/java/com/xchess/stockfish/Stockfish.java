@@ -49,17 +49,17 @@ public class Stockfish implements ChessEngine {
 
         this.process.start();
         this.process.writeCommand("uci");
-        List<String> initLines = this.waitUntilReady();
+        List<String> initLines = waitUntilReady();
         String initLine = initLines.stream().filter(line -> line.startsWith(
                 "Stockfish")).findFirst().orElseThrow(() -> new IOException(
                 "Cannot find stockfish initialization line"));
         this.engineVersion = Float.parseFloat(initLine.split(" ")[1]);
 
-        this.setOptions(options);
+        setOptions(options);
     }
 
     public void stop() throws IOException {
-        this.process.stop();
+        process.stop();
     }
 
     /**
@@ -78,18 +78,18 @@ public class Stockfish implements ChessEngine {
         List<String> commands = this.options.getCommands();
         for (String command :
                 commands) {
-            this.process.writeCommand(command);
-            this.waitUntilReady();
+            process.writeCommand(command);
+            waitUntilReady();
         }
     }
 
     public synchronized String getFenPosition() throws IOException,
             TimeoutException {
-        this.process.writeCommand("d");
-        List<String> lines = this.process.readLinesUntil(Pattern.compile(
+        process.writeCommand("d");
+        List<String> lines = process.readLinesUntil(Pattern.compile(
                         "^Checkers.*$"),
-                this.config.getTimeoutInMs());
-        this.waitUntilReady();
+                config.getTimeoutInMs());
+        waitUntilReady();
 
         String fenLineOptional =
                 lines.stream().filter(line -> line.startsWith("Fen")).findFirst().orElseThrow(() -> new IOException("Cannot find fen line in output"));
@@ -99,11 +99,11 @@ public class Stockfish implements ChessEngine {
 
     public synchronized List<String> getPossibleMoves() throws IOException,
             TimeoutException {
-        this.process.writeCommand("go perft 1");
-        List<String> lines = this.process.readLinesUntil(Pattern.compile(
+        process.writeCommand("go perft 1");
+        List<String> lines = process.readLinesUntil(Pattern.compile(
                         "^Nodes searched.*$"),
-                this.config.getTimeoutInMs());
-        this.waitUntilReady();
+                config.getTimeoutInMs());
+        waitUntilReady();
         return lines.stream().filter(line -> Pattern.matches("^....: 1$",
                 line)).map(line -> line.split(":")[0]).toList();
     }
@@ -114,7 +114,7 @@ public class Stockfish implements ChessEngine {
         if (!SquareValidator.isSquareSyntaxValid(lowerCaseSquare)) {
             throw new InvalidSquareSyntaxException(square);
         }
-        return this.getPossibleMoves().stream().filter(move -> move.startsWith(lowerCaseSquare)).toList();
+        return getPossibleMoves().stream().filter(move -> move.startsWith(lowerCaseSquare)).toList();
     }
 
     public synchronized boolean isMovePossible(String move) throws IOException,
@@ -129,20 +129,20 @@ public class Stockfish implements ChessEngine {
     public synchronized void moveToStartPosition(boolean newGame) throws IOException,
             TimeoutException {
         if (newGame) {
-            this.process.writeCommand("ucinewgame");
+            process.writeCommand("ucinewgame");
         }
-        this.process.writeCommand("position startpos");
-        this.waitUntilReady();
+        process.writeCommand("position startpos");
+        waitUntilReady();
     }
 
     public synchronized void moveToFenPosition(String fen, boolean newGame) throws IOException,
             TimeoutException, InvalidFenPositionException {
         if (newGame) {
-            this.process.writeCommand("ucinewgame");
+            process.writeCommand("ucinewgame");
         }
-        this.process.writeCommand("position fen " + fen);
+        process.writeCommand("position fen " + fen);
         try {
-            this.waitUntilReady();
+            waitUntilReady();
         } catch (ProcessKilledException e) {
             throw new InvalidFenPositionException(fen);
         }
@@ -158,19 +158,19 @@ public class Stockfish implements ChessEngine {
         if (invalidMoveIndex != -1) {
             throw new InvalidMoveSyntaxException(moves.get(invalidMoveIndex));
         }
-        String startingPosition = this.getFenPosition();
+        String startingPosition = getFenPosition();
         for (String move :
                 lowerCasesMoves) {
             try {
-                if (this.isMovePossible(move)) {
-                    this.process.writeCommand("position fen " + this.getFenPosition() + " moves " + move);
-                    this.waitUntilReady();
+                if (isMovePossible(move)) {
+                    process.writeCommand("position fen " + getFenPosition() + " moves " + move);
+                    waitUntilReady();
                 } else {
-                    this.moveToFenPosition(startingPosition, false);
-                    throw new IllegalMoveException(move, this.getFenPosition());
+                    moveToFenPosition(startingPosition, false);
+                    throw new IllegalMoveException(move, getFenPosition());
                 }
             } catch (TimeoutException e) {
-                this.moveToFenPosition(startingPosition, false);
+                moveToFenPosition(startingPosition, false);
                 throw e;
             }
 
@@ -178,18 +178,18 @@ public class Stockfish implements ChessEngine {
     }
 
     public synchronized String findBestMove(EvaluationParameters options) throws IOException, TimeoutException {
-        this.process.writeCommand(options.buildCommand());
+        process.writeCommand(options.buildCommand());
 
-        return this.getBestMoveFromOutput();
+        return getBestMoveFromOutput();
     }
 
     public synchronized ChessEngineEvaluation getPositionEvaluation(EvaluationParameters options) throws IOException,
             TimeoutException {
-        String currentFen = this.getFenPosition();
+        String currentFen = getFenPosition();
         int multiplier = currentFen.contains("w") ? 1 : -1;
 
-        this.process.writeCommand(options.buildCommand());
-        List<String> evaluationLines = this.getEvaluationLines();
+        process.writeCommand(options.buildCommand());
+        List<String> evaluationLines = getEvaluationLines();
         Collections.reverse(evaluationLines);
 
         String lastInfoLine =
@@ -200,7 +200,7 @@ public class Stockfish implements ChessEngine {
         String type = splittedLastInfoLine[1];
         String value = splittedLastInfoLine[2];
         return ChessEngineEvaluation.builder()
-                .type(type.equals("cp") ?
+                .type("cp".equals(type) ?
                         ChessEngineEvaluationType.CENTIPAWNS :
                         ChessEngineEvaluationType.MATE)
                 .value(Integer.parseInt(value) * multiplier)
@@ -209,7 +209,7 @@ public class Stockfish implements ChessEngine {
 
     public synchronized boolean healthCheck() {
         try {
-            this.waitUntilReady();
+            waitUntilReady();
         } catch (IOException | TimeoutException e) {
             return false;
         }
@@ -230,7 +230,7 @@ public class Stockfish implements ChessEngine {
                         "bestmove")).findFirst().orElseThrow(IOException::new);
 
         String bestMove = bestmoveLine.split(" ")[1];
-        return bestMove.equals("(none)") ? null : bestMove;
+        return "(none)".equals(bestMove) ? null : bestMove;
     }
 
     /**
@@ -242,9 +242,9 @@ public class Stockfish implements ChessEngine {
     private List<String> getEvaluationLines() throws TimeoutException,
             IOException {
         List<String> bestMoveLines =
-                this.process.readLinesUntil(Pattern.compile("^bestmove.*$"),
-                        this.config.getTimeoutInMs());
-        this.waitUntilReady();
+                process.readLinesUntil(Pattern.compile("^bestmove.*$"),
+                        config.getTimeoutInMs());
+        waitUntilReady();
         return bestMoveLines;
     }
 
@@ -256,8 +256,8 @@ public class Stockfish implements ChessEngine {
      */
     protected List<String> waitUntilReady() throws IOException,
             TimeoutException {
-        this.process.writeCommand("isready");
-        return this.process.readLinesUntil("readyok",
-                this.config.getTimeoutInMs());
+        process.writeCommand("isready");
+        return process.readLinesUntil("readyok",
+                config.getTimeoutInMs());
     }
 }
